@@ -1,0 +1,18 @@
+<mxfile host="Electron" modified="2023-07-01T00:34:34.079Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/21.5.1 Chrome/112.0.5615.204 Electron/24.6.0 Safari/537.36" etag="xSZ00-9uKMqehm0kAKQ0" version="21.5.1" type="device">
+  <diagram name="Page-1" id="856n5ReWDp7GWS6bLPx3">
+    <mxGraphModel dx="780" dy="496" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="zRCv-B-fkHsfVVYk48xq-1" value="" style="ellipse;html=1;shape=startState;fillColor=#000000;strokeColor=#ff0000;" vertex="1" parent="1">
+          <mxGeometry x="340" y="10" width="30" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="zRCv-B-fkHsfVVYk48xq-2" value="" style="edgeStyle=orthogonalEdgeStyle;html=1;verticalAlign=bottom;endArrow=open;endSize=8;strokeColor=#ff0000;rounded=0;" edge="1" source="zRCv-B-fkHsfVVYk48xq-1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="355" y="100" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
