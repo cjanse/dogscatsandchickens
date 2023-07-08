@@ -1,0 +1,6 @@
+Card Size - 732 x 1102 pixels
+
+Creature color - #90EE90
+Upgrade Color - #FA5F55
+Action Color - #40E0D0
+Creature/upgrade/action text font - Viner Hand ITC
