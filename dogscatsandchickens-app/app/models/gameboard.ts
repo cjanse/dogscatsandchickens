@@ -39,7 +39,7 @@ export class GameBoard {
         this.deck.push(new Upgrade(202, "Duck Army", "Counter Attack - blocks opposing creature's attack and attacks that creature", "duck_army.jpg", "upgrade.jpg", "Counter Attack"))
         this.deck.push(new Upgrade(203, "Deflect", "Defense - blocks opposing creature's attack", "deflect.jpg", "upgrade.jpg", "Defense"))
         this.deck.push(new Upgrade(204, "Sand Shield", "Defense - blocks opposing creature's attack", "sand_shield.jpg", "upgrade.jpg", "Defense"))
-        this.deck.push(new Upgrade(205, "Paypohones Don\'t Exist Anymore", "Fake Upgrade - returns to your hand when creature is defeated", "payphones_dont_exist_anymore.jpg", "upgrade.jpg", "Fake Upgrade"))
+        this.deck.push(new Upgrade(205, "Payphones Don\'t Exist Anymore", "Fake Upgrade - returns to your hand when creature is defeated", "payphones_dont_exist_anymore.jpg", "upgrade.jpg", "Fake Upgrade"))
         this.deck.push(new Upgrade(206, "Fading Away", "Fake Upgrade - returns to your hand when creature is defeated", "fading_away.jpg", "upgrade.jpg", "Fake Upgrade"))
         this.deck.push(new Upgrade(207, "Sleeping", "Fake Upgrade - returns to your hand when creature is defeated", "sleeping.jpg", "upgrade.jpg", "Fake Upgrade"))
         this.deck.push(new Upgrade(208, "Cool Down Squirrel", "Revive - instead of placing your defeated creature in the discard pile, place it back in your hand", "cool_down_squirrel.jpg", "upgrade.jpg", "Revive"))
@@ -53,5 +53,15 @@ export class GameBoard {
         this.deck.push(new Upgrade(307, "Messy Dorm", "Examine your opponent's hand", "messy_dorm_2.jpg", "action.jpg", "Messy Dorm"))
         this.deck.push(new Upgrade(308, "Power of Tea", "Reveal one of your opponent's cards on the field", "power_of_tea_1.jpg", "action.jpg", "Power of Tea"))
         this.deck.push(new Upgrade(309, "Power of Tea", "Reveal one of your opponent's cards on the field", "power_of_tea_2.jpg", "action.jpg", "Power of Tea"))
+
+        //this.deck = GameBoard.shuffle(this.deck)
+    }
+
+    static shuffle(cards: Card[]): Card[]{
+        for (let i = cards.length -1; i > 0; i--){
+            const j = Math.floor(Math.random() * (i + 1));
+            [cards[i], cards[j]] = [cards[j], cards[i]]
+        }
+        return cards;
     }
 }
