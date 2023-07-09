@@ -1,8 +1,76 @@
-import Image from 'next/image'
+//import Image from 'next/image'
+import {Creature} from "./models/creature";
+import {Upgrade} from "./models/upgrade";
+import {Action} from "./models/action";
+import {Player} from "./models/player";
+import {GameBoard} from "./models/gameboard"
 
 export default function Home() {
+
+  let creature: Creature = new Creature(0, "Fancy Bella", "Defeats Cats, Defeated By Chickens", "fancy_bella.jpg", "creature.jpg", "Dog", "Matching Ability: Defeats Any Creature")
+  let upgrade: Upgrade = new Upgrade(1, "Cactus Attack", "Counter Attack - blocks opposing creature's attack and attacks that creature", "cactus_attack.jpg", "upgrade.jpg", "Counter Attack")
+  let action: Action = new Action(2, "Forest Spirits", "Go into the discard pile and choose one creature card", "forest_spirits.jpg", "action.jpg", "Spirits")
+  let player: Player = new Player();
+  let gameBoard: GameBoard = new GameBoard();
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
+    <main>
+      <div><i>Hello World!</i></div>
+      <b>Testing Creating Different Cards:</b>
+      <h2>{creature.toString()}</h2>
+      <h2>{upgrade.toString()}</h2>
+      <h2>{action.toString()}</h2>
+      <h2>------------------------------------------------</h2>
+      <b>Testing Player:</b>
+      <h2>{player.hand[0].toString()}</h2>
+      <h2>{player.hand[1].toString()}</h2>
+      <h2>{player.hand[2].toString()}</h2>
+      <h2>{player.field[0][0].toString()}</h2>
+      <h2>{player.field[0][1].toString()}</h2>
+      <h2>{player.field[1][0].toString()}</h2>
+      <h2>------------------------------------------------</h2>
+      <b>Testing Deck in GameBoard:</b>
+      <h2>{gameBoard.deck[0].toString()}</h2>
+      <h2>{gameBoard.deck[1].toString()}</h2>
+      <h2>{gameBoard.deck[2].toString()}</h2>
+      <h2>{gameBoard.deck[3].toString()}</h2>
+      <h2>{gameBoard.deck[4].toString()}</h2>
+      <h2>{gameBoard.deck[5].toString()}</h2>
+      <h2>{gameBoard.deck[6].toString()}</h2>
+      <h2>{gameBoard.deck[7].toString()}</h2>
+      <h2>{gameBoard.deck[8].toString()}</h2>
+      <h2>{gameBoard.deck[9].toString()}</h2>
+      <h2>{gameBoard.deck[10].toString()}</h2>
+      <h2>{gameBoard.deck[11].toString()}</h2>
+      <h2>{gameBoard.deck[12].toString()}</h2>
+      <h2>{gameBoard.deck[13].toString()}</h2>
+      <h2>{gameBoard.deck[14].toString()}</h2>
+      <h2>{gameBoard.deck[15].toString()}</h2>
+      <h2>{gameBoard.deck[16].toString()}</h2>
+      <h2>{gameBoard.deck[17].toString()}</h2>
+      <h2>{gameBoard.deck[18].toString()}</h2>
+      <h2>{gameBoard.deck[19].toString()}</h2>
+      <h2>{gameBoard.deck[20].toString()}</h2>
+      <h2>{gameBoard.deck[21].toString()}</h2>
+      <h2>{gameBoard.deck[22].toString()}</h2>
+      <h2>{gameBoard.deck[23].toString()}</h2>
+      <h2>{gameBoard.deck[24].toString()}</h2>
+      <h2>{gameBoard.deck[25].toString()}</h2>
+      <h2>{gameBoard.deck[26].toString()}</h2>
+      <h2>{gameBoard.deck[27].toString()}</h2>
+      <h2>{gameBoard.deck[28].toString()}</h2>
+      <h2>{gameBoard.deck[29].toString()}</h2>
+      <h2>{gameBoard.deck[30].toString()}</h2>
+      <h2>{gameBoard.deck[31].toString()}</h2>
+      <h2>{gameBoard.deck[32].toString()}</h2>
+      <h2>{gameBoard.deck[33].toString()}</h2>
+      <h2>{gameBoard.deck[34].toString()}</h2>
+      <h2>{gameBoard.deck[35].toString()}</h2>
+    </main>
+  )
+}
+
+/*<main className="flex min-h-screen flex-col items-center justify-between p-24">
       <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
         <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
           Get started by editing&nbsp;
@@ -38,7 +106,6 @@ export default function Home() {
           priority
         />
       </div>
-
       <div className="mb-32 grid text-center lg:mb-0 lg:grid-cols-4 lg:text-left">
         <a
           href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
@@ -109,5 +176,4 @@ export default function Home() {
         </a>
       </div>
     </main>
-  )
-}
+    */
