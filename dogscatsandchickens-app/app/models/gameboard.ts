@@ -55,6 +55,33 @@ export class GameBoard {
         this.deck.push(new Action(309, "Power of Tea", "Reveal one of your opponent's cards on the field", "power_of_tea_2.jpg", "action.jpg", "Power of Tea"))
     }
 
+    toString(): String{
+        let message: String = "Deck: ";
+        
+        //Print Deck
+        if (this.deck.length == 0){
+            message += "EMPTY\n"
+        }
+        this.deck.forEach(function (card){
+            message += card.toString() + "\n" 
+        })
+
+        //Print Discard
+        message += "Discard: "
+        if (this.discard.length == 0){
+            message += "EMPTY\n"
+        }
+        this.discard.forEach(function (card){
+            message += card.toString() + "\n" 
+        })
+
+        //Print players
+        message += this.players[0].toString()
+        message += this.players[1].toString()
+        
+        return message;
+    }
+
     static shuffle(cards: Card[]): Card[]{
         for (let i = cards.length -1; i > 0; i--){
             const j = Math.floor(Math.random() * (i + 1));
@@ -62,4 +89,5 @@ export class GameBoard {
         }
         return cards;
     }
+
 }

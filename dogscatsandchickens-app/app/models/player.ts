@@ -10,11 +10,34 @@ export class Player{
 
     constructor(name:string = "Carter"){
         this.name = name;
-        this.hand.push(new Creature(0, "Fancy Bella", "Defeats Cats, Defeated By Chickens", "fancy_bella.jpg", "creature.jpg", "Dog", "Matching Ability: Defeats Any Creature"))
-        this.hand.push(new Upgrade(1, "Cactus Attack", "Counter Attack - blocks opposing creature's attack and attacks that creature", "cactus_attack.jpg", "upgrade.jpg", "Counter Attack"))
-        this.hand.push(new Action(2, "Forest Spirits", "Go into the discard pile and choose one creature card", "forest_spirits.jpg", "action.jpg", "Spirits"))
-        this.field.push([new Creature(0, "Fancy Bella", "Defeats Cats, Defeated By Chickens", "fancy_bella.jpg", "creature.jpg", "Dog", "Matching Ability: Defeats Any Creature")])
-        this.field[0].push(new Upgrade(1, "Cactus Attack", "Counter Attack - blocks opposing creature's attack and attacks that creature", "cactus_attack.jpg", "upgrade.jpg", "Counter Attack"))
-        this.field.push([new Creature(0, "Fancy Bella", "Defeats Cats, Defeated By Chickens", "fancy_bella.jpg", "creature.jpg", "Dog", "Matching Ability: Defeats Any Creature")])
+    }
+
+    toString(): string {
+        let message: string;
+        //Print player's name
+        message = "Player: " + this.name + "\nHand: ";
+
+        //Print hand
+        if (this.hand.length == 0){
+            message += "EMPTY\n"
+        }
+        this.hand.forEach(function (card){
+            message += card.toString() + "\n" 
+        })
+
+        //Print Field
+        message += "Field: "
+        if (this.field.length == 0){
+            message += "EMPTY\n"
+        }
+        this.field.forEach(function (cardArray){
+            cardArray.forEach(function (card){
+                message += card.toString() + ","
+            })
+            message = message.substring(0, message.length-1);
+            message += "\n"
+        })
+
+        return message;
     }
 }
