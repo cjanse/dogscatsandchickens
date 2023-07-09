@@ -1,74 +1,16 @@
 //import Image from 'next/image'
-import {Creature} from "./models/creature";
-import {Upgrade} from "./models/upgrade";
-import {Action} from "./models/action";
-import {Player} from "./models/player";
-import {GameBoard} from "./models/gameboard"
+import {GameController} from "./controller/gameController"
 
 export default function Home() {
 
-  let creature: Creature = new Creature(0, "Fancy Bella", "Defeats Cats, Defeated By Chickens", "fancy_bella.jpg", "creature.jpg", "Dog", "Matching Ability: Defeats Any Creature")
-  let upgrade: Upgrade = new Upgrade(1, "Cactus Attack", "Counter Attack - blocks opposing creature's attack and attacks that creature", "cactus_attack.jpg", "upgrade.jpg", "Counter Attack")
-  let action: Action = new Action(2, "Forest Spirits", "Go into the discard pile and choose one creature card", "forest_spirits.jpg", "action.jpg", "Spirits")
-  let player: Player = new Player();
-  let gameBoard: GameBoard = new GameBoard();
+  let gameController: GameController = new GameController();
+  gameController.preGamePreparation();
+  console.log(gameController.gameBoard.toString())
 
   return (
     <main>
       <div><i>Hello World!</i></div>
-      <b>Testing Creating Different Cards:</b>
-      <h2>{creature.toString()}</h2>
-      <h2>{upgrade.toString()}</h2>
-      <h2>{action.toString()}</h2>
-      <h2>------------------------------------------------</h2>
-      <b>Testing Player:</b>
-      <h2>{player.name}</h2>
-      <h2>{player.hand[0].toString()}</h2>
-      <h2>{player.hand[1].toString()}</h2>
-      <h2>{player.hand[2].toString()}</h2>
-      <h2>{player.field[0][0].toString()}</h2>
-      <h2>{player.field[0][1].toString()}</h2>
-      <h2>{player.field[1][0].toString()}</h2>
-      <h2>------------------------------------------------</h2>
-      <b>Testing Deck in GameBoard:</b>
-      <h2>{gameBoard.players[0].name}</h2>
-      <h2>{gameBoard.players[1].name}</h2>
-      <h2>{gameBoard.deck[0].toString()}</h2>
-      <h2>{gameBoard.deck[1].toString()}</h2>
-      <h2>{gameBoard.deck[2].toString()}</h2>
-      <h2>{gameBoard.deck[3].toString()}</h2>
-      <h2>{gameBoard.deck[4].toString()}</h2>
-      <h2>{gameBoard.deck[5].toString()}</h2>
-      <h2>{gameBoard.deck[6].toString()}</h2>
-      <h2>{gameBoard.deck[7].toString()}</h2>
-      <h2>{gameBoard.deck[8].toString()}</h2>
-      <h2>{gameBoard.deck[9].toString()}</h2>
-      <h2>{gameBoard.deck[10].toString()}</h2>
-      <h2>{gameBoard.deck[11].toString()}</h2>
-      <h2>{gameBoard.deck[12].toString()}</h2>
-      <h2>{gameBoard.deck[13].toString()}</h2>
-      <h2>{gameBoard.deck[14].toString()}</h2>
-      <h2>{gameBoard.deck[15].toString()}</h2>
-      <h2>{gameBoard.deck[16].toString()}</h2>
-      <h2>{gameBoard.deck[17].toString()}</h2>
-      <h2>{gameBoard.deck[18].toString()}</h2>
-      <h2>{gameBoard.deck[19].toString()}</h2>
-      <h2>{gameBoard.deck[20].toString()}</h2>
-      <h2>{gameBoard.deck[21].toString()}</h2>
-      <h2>{gameBoard.deck[22].toString()}</h2>
-      <h2>{gameBoard.deck[23].toString()}</h2>
-      <h2>{gameBoard.deck[24].toString()}</h2>
-      <h2>{gameBoard.deck[25].toString()}</h2>
-      <h2>{gameBoard.deck[26].toString()}</h2>
-      <h2>{gameBoard.deck[27].toString()}</h2>
-      <h2>{gameBoard.deck[28].toString()}</h2>
-      <h2>{gameBoard.deck[29].toString()}</h2>
-      <h2>{gameBoard.deck[30].toString()}</h2>
-      <h2>{gameBoard.deck[31].toString()}</h2>
-      <h2>{gameBoard.deck[32].toString()}</h2>
-      <h2>{gameBoard.deck[33].toString()}</h2>
-      <h2>{gameBoard.deck[34].toString()}</h2>
-      <h2>{gameBoard.deck[35].toString()}</h2>
+      <div>{gameController.gameBoard.toString()}</div>
     </main>
   )
 }
