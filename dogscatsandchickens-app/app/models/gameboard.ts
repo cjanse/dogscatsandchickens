@@ -11,7 +11,12 @@ export class GameBoard {
     players: Player[] = []
     currentPlayer: number = 0
 
-    constructor(){
+    constructor(player1Name: string = "Player 1", player2Name: string = "Player 2"){
+        //Making Player
+        this.players.push(new Player(player1Name))
+        this.players.push(new Player(player2Name))
+
+        //Making Deck
         this.deck.push(new Creature(101, "Bella", "Defeats Chickens, Defeated By Dogs", "bella.jpg", "creature.jpg", "Cat", "Matching Ability: Multiple Attacks"))
         this.deck.push(new Creature(101, "Bella", "Defeats Chickens, Defeated By Dogs", "bella.jpg", "creature.jpg", "Cat", "Matching Ability: Multiple Attacks"))
         this.deck.push(new Creature(102, "Pounce", "Defeats Chickens, Defeated By Dogs", "pounce.jpg", "creature.jpg", "Cat", "Matching Ability: Multiple Attacks"))

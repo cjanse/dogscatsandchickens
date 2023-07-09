@@ -22,6 +22,7 @@ export default function Home() {
       <h2>{action.toString()}</h2>
       <h2>------------------------------------------------</h2>
       <b>Testing Player:</b>
+      <h2>{player.name}</h2>
       <h2>{player.hand[0].toString()}</h2>
       <h2>{player.hand[1].toString()}</h2>
       <h2>{player.hand[2].toString()}</h2>
@@ -30,6 +31,8 @@ export default function Home() {
       <h2>{player.field[1][0].toString()}</h2>
       <h2>------------------------------------------------</h2>
       <b>Testing Deck in GameBoard:</b>
+      <h2>{gameBoard.players[0].name}</h2>
+      <h2>{gameBoard.players[1].name}</h2>
       <h2>{gameBoard.deck[0].toString()}</h2>
       <h2>{gameBoard.deck[1].toString()}</h2>
       <h2>{gameBoard.deck[2].toString()}</h2>
