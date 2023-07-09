@@ -44,17 +44,15 @@ export class GameBoard {
         this.deck.push(new Upgrade(207, "Sleeping", "Fake Upgrade - returns to your hand when creature is defeated", "sleeping.jpg", "upgrade.jpg", "Fake Upgrade"))
         this.deck.push(new Upgrade(208, "Cool Down Squirrel", "Revive - instead of placing your defeated creature in the discard pile, place it back in your hand", "cool_down_squirrel.jpg", "upgrade.jpg", "Revive"))
         this.deck.push(new Upgrade(209, "Snow Apocalypse", "Self-Destruct - when creature is defeated, opposing creature and attached upgrades are discarded", "snow_apocalypse.jpg", "upgrade.jpg", "Self-Destruct"))
-        this.deck.push(new Upgrade(301, "Beach Spirits", "Go into the discard pile and choose one upgrade card", "beach_spirits.jpg", "action.jpg", "Spirits"))
-        this.deck.push(new Upgrade(302, "Forest Spirits", "Go into the discard pile and choose one creature card", "forest_spirits.jpg", "action.jpg", "Spirits"))
-        this.deck.push(new Upgrade(303, "River Spirits", "Go into the discard pile and choose one action card", "river_spirits.jpg", "action.jpg", "Spirits"))
-        this.deck.push(new Upgrade(304, "Bird Army", "Steal one card from your opponent at random", "bird_army_1.jpg", "action.jpg", "Bird Army"))
-        this.deck.push(new Upgrade(305, "Bird Army", "Steal one card from your opponent at random", "bird_army_2.jpg", "action.jpg", "Bird Army"))
-        this.deck.push(new Upgrade(306, "Messy Dorm", "Examine your opponent's hand", "messy_dorm_1.jpg", "action.jpg", "Messy Dorm"))
-        this.deck.push(new Upgrade(307, "Messy Dorm", "Examine your opponent's hand", "messy_dorm_2.jpg", "action.jpg", "Messy Dorm"))
-        this.deck.push(new Upgrade(308, "Power of Tea", "Reveal one of your opponent's cards on the field", "power_of_tea_1.jpg", "action.jpg", "Power of Tea"))
-        this.deck.push(new Upgrade(309, "Power of Tea", "Reveal one of your opponent's cards on the field", "power_of_tea_2.jpg", "action.jpg", "Power of Tea"))
-
-        //this.deck = GameBoard.shuffle(this.deck)
+        this.deck.push(new Action(301, "Beach Spirits", "Go into the discard pile and choose one upgrade card", "beach_spirits.jpg", "action.jpg", "Spirits"))
+        this.deck.push(new Action(302, "Forest Spirits", "Go into the discard pile and choose one creature card", "forest_spirits.jpg", "action.jpg", "Spirits"))
+        this.deck.push(new Action(303, "River Spirits", "Go into the discard pile and choose one action card", "river_spirits.jpg", "action.jpg", "Spirits"))
+        this.deck.push(new Action(304, "Bird Army", "Steal one card from your opponent at random", "bird_army_1.jpg", "action.jpg", "Bird Army"))
+        this.deck.push(new Action(305, "Bird Army", "Steal one card from your opponent at random", "bird_army_2.jpg", "action.jpg", "Bird Army"))
+        this.deck.push(new Action(306, "Messy Dorm", "Examine your opponent's hand", "messy_dorm_1.jpg", "action.jpg", "Messy Dorm"))
+        this.deck.push(new Action(307, "Messy Dorm", "Examine your opponent's hand", "messy_dorm_2.jpg", "action.jpg", "Messy Dorm"))
+        this.deck.push(new Action(308, "Power of Tea", "Reveal one of your opponent's cards on the field", "power_of_tea_1.jpg", "action.jpg", "Power of Tea"))
+        this.deck.push(new Action(309, "Power of Tea", "Reveal one of your opponent's cards on the field", "power_of_tea_2.jpg", "action.jpg", "Power of Tea"))
     }
 
     static shuffle(cards: Card[]): Card[]{
