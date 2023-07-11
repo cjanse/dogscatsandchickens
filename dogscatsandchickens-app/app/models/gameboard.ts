@@ -78,7 +78,7 @@ export class GameBoard {
         //Print players
         message += this.players[0].toString()
         message += this.players[1].toString()
-        
+
         return message;
     }
 

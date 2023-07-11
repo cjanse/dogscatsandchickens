@@ -1,16 +1,12 @@
 //import Image from 'next/image'
-import {GameController} from "./controller/gameController"
+import {BasicGameView} from "./views/basicGameView"
 
 export default function Home() {
-
-  let gameController: GameController = new GameController();
-  gameController.preGamePreparation();
-  console.log(gameController.gameBoard.toString())
 
   return (
     <main>
       <div><i>Hello World!</i></div>
-      <div>{gameController.gameBoard.toString()}</div>
+      <BasicGameView />
     </main>
   )
 }
