@@ -6,13 +6,13 @@ import {Player} from "../models/player"
 import {GameBoard} from "../models/gameboard"
 
 export class GameController {
-
     gameBoard: GameBoard;
 
     constructor(player1Name: string = "Player 1", player2Name: string = "Player 2"){
         this.gameBoard = new GameBoard(player1Name, player2Name);
     }
 
+    /* Prepares the game by shuffling the deck and dealing out cards */
     preGamePreparation(): void {
         //Shuffle Deck
         GameBoard.shuffle(this.gameBoard.deck)
@@ -38,5 +38,288 @@ export class GameController {
         this.gameBoard.players[1].hand.push(this.gameBoard.deck.splice(this.gameBoard.deck.length-1, 1)[0])
         this.gameBoard.players[0].hand.push(this.gameBoard.deck.splice(this.gameBoard.deck.length-1, 1)[0])
         this.gameBoard.players[1].hand.push(this.gameBoard.deck.splice(this.gameBoard.deck.length-1, 1)[0])
+    }
+
+    /* This function can be called multiple times to do moves at random...
+    *  is a tester method that is not meant to be used in the final version of the 
+    *  game but is designed to test current design. */
+    step: number = 0;
+    testerMove(): void {
+        console.log("Turn: "+ this.gameBoard.turnNumber + " | Player: " + this.gameBoard.players[this.gameBoard.currentPlayer].name + " | Step: " + this.step)
+        //Forces player to put creature/action card down if they don't have a creature in front of them
+        //if it is not their first turn
+        if (!this.hasFieldCreature() && (this.gameBoard.turnNumber > 1)){
+            //checks to see if player has a creature card or an action card
+            if (this.hasCreature() || this.hasAction()) {
+                //uses action or places creature on field
+                if (this.hasAction()){
+                    this.useAction(this.randomCardId("Action"));
+                }
+                else {
+                    this.addCreatureToField(this.randomCardId("Creature"));
+                }
+                this.gameBoard.players[this.gameBoard.currentPlayer].moves -= 1;
+            }
+            else {
+                console.log("GAME OVER: Player: " + (this.gameBoard.currentPlayer+1)%2 + " has won")
+            }
+        }
+        //Forces player to put creature card down if they don't have a creature in front of them
+        //for their first turn
+        else if (!this.hasFieldCreature()){
+            this.addCreatureToField(this.randomCardId("Creature"));
+        } 
+        //if step is 0, then player draws a card
+        else if (this.step == 0){
+            if (this.gameBoard.deck.length > 0) this.drawCard();
+            this.step += 1;
+        }
+        //chooses between fighting turn & reinforcement turn
+        else if (this.step == 1 && this.gameBoard.players[this.gameBoard.currentPlayer].moves > 0 && this.gameBoard.players[this.gameBoard.currentPlayer].hand.length > 0){
+            //Chooses reinforcement turn
+            if (true /*INSERT PROBABILITY TO DO FIGHTING TURN VS. PLACEMENT TURN*/ && this.gameBoard.players[this.gameBoard.currentPlayer].hand.length > 0){
+                let cardId = this.randomCardId()
+                //Places creature on field
+                if (cardId < 200) {
+                    if (this.canMatch(cardId)){
+                        this.matchCreature(cardId)
+                        this.matchCreatureActivateAbility(cardId)
+                    }
+                    else {
+                        this.addCreatureToField(cardId)
+                    }
+                }
+                //places upgrade on field
+                else if (cardId > 199 && cardId < 300){
+                    if (this.canPlaceUpgrade()){
+                        this.placeUpgradeOnCreature(cardId,this.randomCreatureForUpgrade())
+                    }
+                    else {
+                        this.gameBoard.players[this.gameBoard.currentPlayer].moves += 1
+                    }
+                }
+                //uses action card
+                else if (cardId > 299 && cardId < 400) {
+                    this.useAction(cardId)
+                }
+                //removes a move
+                this.gameBoard.players[this.gameBoard.currentPlayer].moves -= 1
+            }
+            if (this.gameBoard.players[this.gameBoard.currentPlayer].moves == 0 || this.gameBoard.players[this.gameBoard.currentPlayer].hand.length == 0){
+                this.step += 1
+            }
+        }
+        else if (this.step == 1 && (this.gameBoard.players[this.gameBoard.currentPlayer].moves == 0 || this.gameBoard.players[this.gameBoard.currentPlayer].hand.length == 0)) this.step += 1
+        //get rids of extra cards or ends turn
+        else if (this.step == 2){
+            //Gets rid of extra cards
+            if (this.gameBoard.players[this.gameBoard.currentPlayer].hand.length > 5){
+                this.discardCardFromHand(this.randomCardId());
+            }
+            else {
+                this.step = 0;
+                this.gameBoard.nextPlayer();
+            }
+        }
+        
+    }
+
+    /* Draws a card for a player */
+    drawCard(): void{
+        this.gameBoard.players[this.gameBoard.currentPlayer].hand.push(this.gameBoard.deck.splice(this.gameBoard.deck.length-1, 1)[0])
+    }
+
+    /* Checks to see if there is at least one creature in front of the player */
+    hasFieldCreature(): boolean {
+        return this.gameBoard.players[this.gameBoard.currentPlayer].field.length > 0
+    }
+
+    /* returns true if player has a creature card */
+    hasCreature(): boolean {
+        return this.gameBoard.players[this.gameBoard.currentPlayer].hand.some(function(value, index, array) {return (value instanceof Creature)})
+    }
+
+    /* returns true if player has an action card */
+    hasAction(): boolean {
+        return this.gameBoard.players[this.gameBoard.currentPlayer].hand.some(function(value, index, array) {return (value instanceof Action)})
+    }
+
+    /* Returns the id of a random card of specified type from player's hand
+    Creature - creature card
+    Upgrade - Upgrade card
+    Action - action card
+    Creature/Action - creature OR action
+    Otherwise, it will return a randomcard id*/
+    randomCardId(type: string= ""): number {
+        switch (type) {
+            case 'Creature':
+                return GameBoard.shuffle(this.gameBoard.players[this.gameBoard.currentPlayer].hand.filter(function (value, index, array) {return (value instanceof Creature)}))[0].id
+            case 'Upgrade':
+                return GameBoard.shuffle(this.gameBoard.players[this.gameBoard.currentPlayer].hand.filter(function (value, index, array) {return (value instanceof Upgrade)}))[0].id
+            case 'Action':
+                return GameBoard.shuffle(this.gameBoard.players[this.gameBoard.currentPlayer].hand.filter(function (value, index, array) {return (value instanceof Action)}))[0].id
+            case 'Creature/Action':
+                return GameBoard.shuffle(this.gameBoard.players[this.gameBoard.currentPlayer].hand.filter(function (value, index, array) {return (value instanceof Creature || value instanceof Action)}))[0].id
+            default:
+                return GameBoard.shuffle(this.gameBoard.players[this.gameBoard.currentPlayer].hand)[0].id
+        }
+    }
+
+    /* Adds Creature on field */
+    addCreatureToField(cardId: number): void {
+        this.gameBoard.players[this.gameBoard.currentPlayer].field.push([this.gameBoard.players[this.gameBoard.currentPlayer].hand.filter(function (value, index, array) {return (value.id == cardId)})[0]])
+        this.gameBoard.players[this.gameBoard.currentPlayer].hand.splice(this.gameBoard.players[this.gameBoard.currentPlayer].hand.indexOf(this.gameBoard.players[this.gameBoard.currentPlayer].hand.filter(function (value, index, array) {return (value.id == cardId)})[0]),1)[0]
+        if (this.checkForMatchedActivatedChicken()) {
+            (this.gameBoard.players[this.gameBoard.currentPlayer].field[this.gameBoard.players[this.gameBoard.currentPlayer].field.length-1][0] as Creature).facedUp = true
+        }
+    }
+
+    /* Uses action card and discards it
+    WILL NEED TO BE MODIFIED*/
+    useAction(cardId: number): void {
+        if (cardId == 301){
+            //Uses Beach Spirits
+            if (this.gameBoard.discard.some(function (value, index, array) {return (value instanceof Upgrade)})) this.getCardFromDiscard(GameBoard.shuffle(this.gameBoard.discard.filter(function (value, index, array) {return (value instanceof Upgrade)}))[0].id)
+        }
+        else if (cardId == 302){
+            //Uses Forest Spirits
+            if (this.gameBoard.discard.some(function (value, index, array) {return (value instanceof Creature)})) this.getCardFromDiscard(GameBoard.shuffle(this.gameBoard.discard.filter(function (value, index, array) {return (value instanceof Creature)}))[0].id)
+        }
+        else if (cardId == 303){
+            //Uses River Spirits
+            if (this.gameBoard.discard.some(function (value, index, array) {return (value instanceof Action)})) this.getCardFromDiscard(GameBoard.shuffle(this.gameBoard.discard.filter(function (value, index, array) {return (value instanceof Action)}))[0].id)
+        }
+        else if (cardId == 304 || cardId == 305) {
+            //Uses Bird Army
+            const cardChoice = Math.floor(Math.random() % 3)
+            if (cardChoice == 0 && this.gameBoard.players[(this.gameBoard.currentPlayer+1)%2].hand.some(function (value, index, array) {return (value instanceof Creature)})){
+                this.stealCard("Creature")
+            }
+            else if (cardChoice == 1 && this.gameBoard.players[(this.gameBoard.currentPlayer+1)%2].hand.some(function (value, index, array) {return (value instanceof Upgrade)})){
+                this.stealCard("Upgrade")
+            }
+            else if (cardChoice == 1 && this.gameBoard.players[(this.gameBoard.currentPlayer+1)%2].hand.some(function (value, index, array) {return (value instanceof Action)})) {
+                this.stealCard("Action")
+            }
+            else if (this.gameBoard.players[(this.gameBoard.currentPlayer+1)%2].hand.some(function (value, index, array) {return (value instanceof Creature)})){
+                this.stealCard("Creature")
+            }
+            else if (this.gameBoard.players[(this.gameBoard.currentPlayer+1)%2].hand.some(function (value, index, array) {return (value instanceof Upgrade)})){
+                this.stealCard("Upgrade")
+            }
+            else if (this.gameBoard.players[(this.gameBoard.currentPlayer+1)%2].hand.some(function (value, index, array) {return (value instanceof Action)})){
+                this.stealCard("Action")
+            }
+        }
+        else if (cardId == 306 || cardId == 307) {
+            //Uses Messy Dorm
+            //DOES NOTHING FOR NOW SINCE THE VIEW IS NOT SET UP
+        }
+        else if ((cardId == 308 || cardId == 309) && this.gameBoard.players[(this.gameBoard.currentPlayer+1)%2].field.length > 0) {
+            this.makeFaceUp(this.getRandomCardOnOpponentField())
+        }
+        this.discardCardFromHand(cardId)
+    }
+
+    /*ensures that an upgrade card can be placed on the field*/
+    canPlaceUpgrade(): boolean {
+        return this.gameBoard.players[this.gameBoard.currentPlayer].field.some(function (value, index, array) {return value.length < 3  || (value.length < 4 && value[1] instanceof Creature)})
+    }
+
+    /*picks random creature id to add upgrade to*/
+    randomCreatureForUpgrade(): number {
+        const length = this.gameBoard.players[this.gameBoard.currentPlayer].field.filter(function (value, index, array) {return value.length < 3  || (value.length < 4 && value[1] instanceof Creature)}).length
+        return this.gameBoard.players[this.gameBoard.currentPlayer].field.filter(function (value, index, array) {return value.length < 3  || (value.length < 4 && value[1] instanceof Creature)})[Math.floor(Math.random()*length)][0].id
+    }
+
+    /*Places upgrade on specified creature*/
+    placeUpgradeOnCreature(cardId: number, creatureCardId: number): void {
+        const indexOfCreature = this.gameBoard.players[this.gameBoard.currentPlayer].field.indexOf(this.gameBoard.players[this.gameBoard.currentPlayer].field.filter(function (value, index, array) {return value[0].id == creatureCardId})[0])
+        this.gameBoard.players[this.gameBoard.currentPlayer].field[indexOfCreature].push(this.gameBoard.players[this.gameBoard.currentPlayer].hand.splice(this.gameBoard.players[this.gameBoard.currentPlayer].hand.indexOf(this.gameBoard.players[this.gameBoard.currentPlayer].hand.filter(function (value, index, array) {return (value.id == cardId)})[0]),1)[0])
+        if (this.checkForMatchedActivatedChicken()) {
+            (this.gameBoard.players[this.gameBoard.currentPlayer].field[indexOfCreature][this.gameBoard.players[this.gameBoard.currentPlayer].field[indexOfCreature].length-1] as Upgrade).facedUp = true
+        }
+    }
+
+    /* Discards specified card from hand */
+    discardCardFromHand(cardId: number): void{
+        this.gameBoard.discard.push(this.gameBoard.players[this.gameBoard.currentPlayer].hand.splice(this.gameBoard.players[this.gameBoard.currentPlayer].hand.indexOf(this.gameBoard.players[this.gameBoard.currentPlayer].hand.filter(function (value, index, array) {return (value.id == cardId)})[0]),1)[0])
+        if (this.gameBoard.discard[this.gameBoard.discard.length-1] instanceof Creature) {
+            (this.gameBoard.discard[this.gameBoard.discard.length-1] as Creature).facedUp = false;
+            (this.gameBoard.discard[this.gameBoard.discard.length-1] as Creature).matched = false;
+        } 
+        else if (this.gameBoard.discard[this.gameBoard.discard.length-1] instanceof Upgrade) {
+            (this.gameBoard.discard[this.gameBoard.discard.length-1] as Upgrade).facedUp = false;
+        } 
+    }
+
+    /* Gets a specified card from the discard pile 
+    and puts it into players hand */
+    getCardFromDiscard(cardId: number): void{
+        this.gameBoard.players[this.gameBoard.currentPlayer].hand.push(this.gameBoard.discard.splice(this.gameBoard.discard.indexOf(this.gameBoard.discard.filter(function (value, index, array) {return (value.id == cardId)})[0]),1)[0])
+    }
+
+    /*Steals a random card from opponent of
+    specified creature type
+    Creature - creature card
+    Upgrade - Upgrade card
+    Action - action card*/
+    stealCard(type: string): void {
+        switch (type){
+            case 'Creature':
+                this.gameBoard.players[this.gameBoard.currentPlayer].hand.push(this.gameBoard.players[(this.gameBoard.currentPlayer+1)%2].hand.splice(this.gameBoard.players[(this.gameBoard.currentPlayer+1)%2].hand.indexOf(GameBoard.shuffle(this.gameBoard.players[(this.gameBoard.currentPlayer+1)%2].hand.filter(function (value, index, array) {return (value instanceof Creature)}))[0]),1)[0])
+                break;
+            case 'Upgrade':
+                this.gameBoard.players[this.gameBoard.currentPlayer].hand.push(this.gameBoard.players[(this.gameBoard.currentPlayer+1)%2].hand.splice(this.gameBoard.players[(this.gameBoard.currentPlayer+1)%2].hand.indexOf(GameBoard.shuffle(this.gameBoard.players[(this.gameBoard.currentPlayer+1)%2].hand.filter(function (value, index, array) {return (value instanceof Upgrade)}))[0]),1)[0])
+                break;
+            case 'Action':
+                this.gameBoard.players[this.gameBoard.currentPlayer].hand.push(this.gameBoard.players[(this.gameBoard.currentPlayer+1)%2].hand.splice(this.gameBoard.players[(this.gameBoard.currentPlayer+1)%2].hand.indexOf(GameBoard.shuffle(this.gameBoard.players[(this.gameBoard.currentPlayer+1)%2].hand.filter(function (value, index, array) {return (value instanceof Action)}))[0]),1)[0])
+                break;
+        }
+    }
+
+    /*Get id of random card on the opponent's field*/
+    getRandomCardOnOpponentField(): number {
+        const creatureIndex = Math.floor(Math.random()*this.gameBoard.players[(this.gameBoard.currentPlayer+1)%2].field.length)
+        return this.gameBoard.players[(this.gameBoard.currentPlayer+1)%2].field[creatureIndex][Math.floor(Math.random()*this.gameBoard.players[(this.gameBoard.currentPlayer+1)%2].field[creatureIndex].length)].id
+    }
+
+    /*Makes the specified card face up on opponent's field*/
+    makeFaceUp(cardId: number): void {
+        this.gameBoard.players[(this.gameBoard.currentPlayer+1)%2].field.forEach(function (value, index, array) {value.forEach(function (value, index, array) {if (value.id == cardId && value instanceof Creature) (value as Creature).facedUp = true; else if (value.id == cardId && value instanceof Upgrade) (value as Upgrade).facedUp = true;})})
+    }
+
+    /*Checks to see if creature card on the field can be matched by specified card*/
+    canMatch(cardId: number): boolean {
+        return this.gameBoard.players[this.gameBoard.currentPlayer].field.map(function (value, index, array) {return value[0]}).some(function (value, index, array) {return Math.floor(value.id) == Math.floor(cardId)})
+    }
+
+    /*Matches creature cards using id*/
+    matchCreature(cardId: number): void {
+        const indexOfCreature = this.gameBoard.players[this.gameBoard.currentPlayer].field.indexOf(this.gameBoard.players[this.gameBoard.currentPlayer].field.filter(function (value, index, array) {return Math.floor(value[0].id) == Math.floor(cardId)})[0]);
+        this.gameBoard.players[this.gameBoard.currentPlayer].field[indexOfCreature].splice(1, 0, this.gameBoard.players[this.gameBoard.currentPlayer].hand.splice(this.gameBoard.players[this.gameBoard.currentPlayer].hand.indexOf(this.gameBoard.players[this.gameBoard.currentPlayer].hand.filter(function (value, index, array) {return (value.id == cardId)})[0]),1)[0]);
+        (this.gameBoard.players[this.gameBoard.currentPlayer].field[indexOfCreature][0] as Creature).matched = true;
+        (this.gameBoard.players[this.gameBoard.currentPlayer].field[indexOfCreature][1] as Creature).matched = true;
+        if ((this.gameBoard.players[this.gameBoard.currentPlayer].field[indexOfCreature][0] as Creature).facedUp) this.matchCreatureActivateAbility(cardId)
+    }
+
+    /*Activates Matched Creature's ability*/
+    matchCreatureActivateAbility(cardId: number): void {
+        const indexOfCreature = this.gameBoard.players[this.gameBoard.currentPlayer].field.indexOf(this.gameBoard.players[this.gameBoard.currentPlayer].field.filter(function (value, index, array) {return Math.floor(value[0].id) == Math.floor(cardId)})[0]);
+        (this.gameBoard.players[this.gameBoard.currentPlayer].field[indexOfCreature][0] as Creature).facedUp = true;
+        (this.gameBoard.players[this.gameBoard.currentPlayer].field[indexOfCreature][1] as Creature).facedUp = true;
+        if ((this.gameBoard.players[this.gameBoard.currentPlayer].field[indexOfCreature][0] as Creature).creatureType == "Chicken") {
+            this.revealAllOpponentCard()
+        }
+    }
+
+    /*Reveals all Creature on opponent's field*/
+    revealAllOpponentCard(): void {
+        this.gameBoard.players[(this.gameBoard.currentPlayer+1)%2].field.forEach(function (value, index, array) {value.forEach(function (value, index, array) {if (value instanceof Creature) (value as Creature).facedUp = true; else {(value as Upgrade).facedUp = true}})})
+    }
+
+    /*Checks to see if there is an activated matching chicken on opponent's field*/
+    checkForMatchedActivatedChicken(): boolean {
+        return this.gameBoard.players[(this.gameBoard.currentPlayer+1)%2].field.map(function (value, index, array) {return value[0]}).some(function (value, index, array) {return (value as Creature).creatureType == "Chicken" && (value as Creature).matched == true && (value as Creature).facedUp == true})
     }
 }

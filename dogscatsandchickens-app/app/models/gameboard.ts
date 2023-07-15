@@ -10,6 +10,7 @@ export class GameBoard {
     discard: Card[] = []
     players: Player[] = []
     currentPlayer: number = 0
+    turnNumber: number = 0
 
     constructor(player1Name: string = "Player 1", player2Name: string = "Player 2"){
         //Making Player
@@ -17,24 +18,24 @@ export class GameBoard {
         this.players.push(new Player(player2Name))
 
         //Making Deck
-        this.deck.push(new Creature(101, "Bella", "Defeats Chickens, Defeated By Dogs", "bella.jpg", "creature.jpg", "Cat", "Matching Ability: Multiple Attacks"))
-        this.deck.push(new Creature(101, "Bella", "Defeats Chickens, Defeated By Dogs", "bella.jpg", "creature.jpg", "Cat", "Matching Ability: Multiple Attacks"))
-        this.deck.push(new Creature(102, "Pounce", "Defeats Chickens, Defeated By Dogs", "pounce.jpg", "creature.jpg", "Cat", "Matching Ability: Multiple Attacks"))
-        this.deck.push(new Creature(102, "Pounce", "Defeats Chickens, Defeated By Dogs", "pounce.jpg", "creature.jpg", "Cat", "Matching Ability: Multiple Attacks"))
-        this.deck.push(new Creature(103, "Snowball", "Defeats Chickens, Defeated By Dogs", "snowball.jpg", "creature.jpg", "Cat", "Matching Ability: Multiple Attacks"))
-        this.deck.push(new Creature(103, "Snowball", "Defeats Chickens, Defeated By Dogs", "snowball.jpg", "creature.jpg", "Cat", "Matching Ability: Multiple Attacks"))
-        this.deck.push(new Creature(104, "Fancy Bella", "Defeats Cats, Defeated By Chickens", "fancy_bella.jpg", "creature.jpg", "Dog", "Matching Ability: Defeats Any Creature"))
-        this.deck.push(new Creature(104, "Fancy Bella", "Defeats Cats, Defeated By Chickens", "fancy_bella.jpg", "creature.jpg", "Dog", "Matching Ability: Defeats Any Creature"))
-        this.deck.push(new Creature(105, "Pretty Bella", "Defeats Cats, Defeated By Chickens", "pretty_bella.jpg", "creature.jpg", "Dog", "Matching Ability: Defeats Any Creature"))
-        this.deck.push(new Creature(105, "Pretty Bella", "Defeats Cats, Defeated By Chickens", "pretty_bella.jpg", "creature.jpg", "Dog", "Matching Ability: Defeats Any Creature"))
-        this.deck.push(new Creature(106, "Puppy Bella", "Defeats Cats, Defeated By Chickens", "puppy_bella.jpg", "creature.jpg", "Dog", "Matching Ability: Defeats Any Creature"))
-        this.deck.push(new Creature(106, "Puppy Bella", "Defeats Cats, Defeated By Chickens", "puppy_bella.jpg", "creature.jpg", "Dog", "Matching Ability: Defeats Any Creature"))
-        this.deck.push(new Creature(107, "Lulu", "Defeats Dogs, Defeated By Cats", "lulu.jpg", "creature.jpg", "Chicken", "Matching Ability: Opponent Must Have All Face-Up Cards"))
-        this.deck.push(new Creature(107, "Lulu", "Defeats Dogs, Defeated By Cats", "lulu.jpg", "creature.jpg", "Chicken", "Matching Ability: Opponent Must Have All Face-Up Cards"))
-        this.deck.push(new Creature(108, "Olive", "Defeats Dogs, Defeated By Cats", "olive.jpg", "creature.jpg", "Chicken", "Matching Ability: Opponent Must Have All Face-Up Cards"))
-        this.deck.push(new Creature(108, "Olive", "Defeats Dogs, Defeated By Cats", "olive.jpg", "creature.jpg", "Chicken", "Matching Ability: Opponent Must Have All Face-Up Cards"))
-        this.deck.push(new Creature(109, "The Family", "Defeats Dogs, Defeated By Cats", "the_family.jpg", "creature.jpg", "Chicken", "Matching Ability: Opponent Must Have All Face-Up Cards"))
-        this.deck.push(new Creature(109, "The Family", "Defeats Dogs, Defeated By Cats", "the_family.jpg", "creature.jpg", "Chicken", "Matching Ability: Opponent Must Have All Face-Up Cards"))
+        this.deck.push(new Creature(101.1, "Bella", "Defeats Chickens, Defeated By Dogs", "bella.jpg", "creature.jpg", "Cat", "Matching Ability: Multiple Attacks"))
+        this.deck.push(new Creature(101.2, "Bella", "Defeats Chickens, Defeated By Dogs", "bella.jpg", "creature.jpg", "Cat", "Matching Ability: Multiple Attacks"))
+        this.deck.push(new Creature(102.1, "Pounce", "Defeats Chickens, Defeated By Dogs", "pounce.jpg", "creature.jpg", "Cat", "Matching Ability: Multiple Attacks"))
+        this.deck.push(new Creature(102.2, "Pounce", "Defeats Chickens, Defeated By Dogs", "pounce.jpg", "creature.jpg", "Cat", "Matching Ability: Multiple Attacks"))
+        this.deck.push(new Creature(103.1, "Snowball", "Defeats Chickens, Defeated By Dogs", "snowball.jpg", "creature.jpg", "Cat", "Matching Ability: Multiple Attacks"))
+        this.deck.push(new Creature(103.2, "Snowball", "Defeats Chickens, Defeated By Dogs", "snowball.jpg", "creature.jpg", "Cat", "Matching Ability: Multiple Attacks"))
+        this.deck.push(new Creature(104.1, "Fancy Bella", "Defeats Cats, Defeated By Chickens", "fancy_bella.jpg", "creature.jpg", "Dog", "Matching Ability: Defeats Any Creature"))
+        this.deck.push(new Creature(104.2, "Fancy Bella", "Defeats Cats, Defeated By Chickens", "fancy_bella.jpg", "creature.jpg", "Dog", "Matching Ability: Defeats Any Creature"))
+        this.deck.push(new Creature(105.1, "Pretty Bella", "Defeats Cats, Defeated By Chickens", "pretty_bella.jpg", "creature.jpg", "Dog", "Matching Ability: Defeats Any Creature"))
+        this.deck.push(new Creature(105.2, "Pretty Bella", "Defeats Cats, Defeated By Chickens", "pretty_bella.jpg", "creature.jpg", "Dog", "Matching Ability: Defeats Any Creature"))
+        this.deck.push(new Creature(106.1, "Puppy Bella", "Defeats Cats, Defeated By Chickens", "puppy_bella.jpg", "creature.jpg", "Dog", "Matching Ability: Defeats Any Creature"))
+        this.deck.push(new Creature(106.2, "Puppy Bella", "Defeats Cats, Defeated By Chickens", "puppy_bella.jpg", "creature.jpg", "Dog", "Matching Ability: Defeats Any Creature"))
+        this.deck.push(new Creature(107.1, "Lulu", "Defeats Dogs, Defeated By Cats", "lulu.jpg", "creature.jpg", "Chicken", "Matching Ability: Opponent Must Have All Face-Up Cards"))
+        this.deck.push(new Creature(107.2, "Lulu", "Defeats Dogs, Defeated By Cats", "lulu.jpg", "creature.jpg", "Chicken", "Matching Ability: Opponent Must Have All Face-Up Cards"))
+        this.deck.push(new Creature(108.1, "Olive", "Defeats Dogs, Defeated By Cats", "olive.jpg", "creature.jpg", "Chicken", "Matching Ability: Opponent Must Have All Face-Up Cards"))
+        this.deck.push(new Creature(108.2, "Olive", "Defeats Dogs, Defeated By Cats", "olive.jpg", "creature.jpg", "Chicken", "Matching Ability: Opponent Must Have All Face-Up Cards"))
+        this.deck.push(new Creature(109.1, "The Family", "Defeats Dogs, Defeated By Cats", "the_family.jpg", "creature.jpg", "Chicken", "Matching Ability: Opponent Must Have All Face-Up Cards"))
+        this.deck.push(new Creature(109.2, "The Family", "Defeats Dogs, Defeated By Cats", "the_family.jpg", "creature.jpg", "Chicken", "Matching Ability: Opponent Must Have All Face-Up Cards"))
         this.deck.push(new Upgrade(201, "Cactus Attack", "Counter Attack - blocks opposing creature's attack and attacks that creature", "cactus_attack.jpg", "upgrade.jpg", "Counter Attack"))
         this.deck.push(new Upgrade(202, "Duck Army", "Counter Attack - blocks opposing creature's attack and attacks that creature", "duck_army.jpg", "upgrade.jpg", "Counter Attack"))
         this.deck.push(new Upgrade(203, "Deflect", "Defense - blocks opposing creature's attack", "deflect.jpg", "upgrade.jpg", "Defense"))
@@ -88,6 +89,12 @@ export class GameBoard {
             [cards[i], cards[j]] = [cards[j], cards[i]]
         }
         return cards;
+    }
+
+    nextPlayer(): void{
+        this.players[this.currentPlayer].moves = 2
+        this.currentPlayer = (this.currentPlayer + 1) % 2
+        this.turnNumber += 1
     }
 
 }
