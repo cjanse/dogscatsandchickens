@@ -1,20 +1,28 @@
 import {GameController} from "../controller/gameController"
+import {useState, useEffect} from "react"
+
+const gameController: GameController = new GameController();
+gameController.preGamePreparation();
 
 export function BasicGameView() {
-    let gameController: GameController = new GameController();
-    gameController.preGamePreparation();
-    console.log(gameController.gameBoard.toString())
+    const [turn, setTurn] = useState(0)
+
+    function onclickHandler(isAttack: boolean){
+        setTurn(turn + 1)
+        gameController.testerMove(isAttack)
+
+    }
     const opponentHandView =  (<div style={{padding:'10px', display: 'grid', gridTemplateColumns: 'repeat(' + gameController.gameBoard.players[1].hand.length+ ', 1fr)', gap: "10px"}}>{gameController.gameBoard.players[1].hand.map(card => <div style={{border: '2px solid'}}>{card.toString()}</div>)}</div>)
-    
+
     const opponentFieldView = (
         <div style={{padding:'10px', display:'grid', gridTemplateColumns: 'repeat(' +gameController.gameBoard.players[1].field.length+', 1fr)', gap: "10px"}}>
             {gameController.gameBoard.players[1].field.map(cards=>
                 <div style={{padding:'10px', display:'grid', gridTemplateColumns: '1fr', gap: "10px"}}>
-                    {cards.reverse().map(card=>
+                    {cards.map(card=>
                         <div style={{border: '2px solid'}}>
                             {card.toString()}
                         </div>
-                    )}
+                    ).reverse()}
                 </div>
             )}
         </div>
@@ -35,13 +43,15 @@ export function BasicGameView() {
     )
     
     const myHandView = (<div style={{padding:'10px', display: 'grid', gridTemplateColumns: 'repeat(' + gameController.gameBoard.players[0].hand.length+ ', 1fr)', gap: "10px"}}>{gameController.gameBoard.players[0].hand.map(card => <div style={{border: '2px solid'}}>{card.toString()}</div>)}</div>)
-    const deckView = (<div style={{padding: '10px', display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: "10px"}}>{gameController.gameBoard.deck.reverse().map(card => <div style={{border: '2px solid'}}>{card.toString()}</div>)}</div>)   
-    const discardView = (<div style={{padding: '10px', display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: "10px"}}>{gameController.gameBoard.discard.reverse().map(card => <div style={{border: '2px solid'}}>{card.toString()}</div>)}</div>)        
-
+    const deckView = (<div style={{padding: '10px', display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: "10px"}}>{gameController.gameBoard.deck.map(card => <div style={{border: '2px solid'}}>{card.toString()}</div>).reverse()}</div>)   
+    const discardView = (<div style={{padding: '10px', display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: "10px"}}>{gameController.gameBoard.discard.map(card => <div style={{border: '2px solid'}}>{card.toString()}</div>).reverse()}</div>)        
+    const bottomButtonView = (<div style={{display: "grid", justifyContent: "center", gridTemplateColumns: "1fr 1fr", gap: "20%", padding: "10px"}}>
+    <button style={{backgroundColor: "gray", textAlign: "center", padding: "10px", border: "solid 2px"}} onClick={() => onclickHandler(true)}>Al ataque!</button>
+       <button style={{backgroundColor: "gray", textAlign: "center", padding: "10px", border: "solid 2px"}} onClick={() => onclickHandler(false)}>Reinforce!</button>
+    </div>)
 
     return (
-        <div>
-         <h1>Hello basic Game View!</h1>
+        <div style={{fontSize:"small"}}>
          <div>Opponent Hand:</div>
          {opponentHandView}
          <hr></hr>
@@ -59,6 +69,8 @@ export function BasicGameView() {
          <hr></hr>
          <div>Discard:</div>
          {discardView}
+         <hr></hr>
+         {bottomButtonView}
         </div>
     )
 }

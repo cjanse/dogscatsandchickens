@@ -7,9 +7,11 @@ export class Player{
     name: string;
     hand: Card[] = [];
     field: Card[][] = [];
+    moves: number;
 
     constructor(name:string = "Carter"){
         this.name = name;
+        this.moves = 2;
     }
 
     toString(): string {

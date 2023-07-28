@@ -1,11 +1,20 @@
 //import Image from 'next/image'
+'use client'
+import { useState, useEffect } from 'react'
 import {BasicGameView} from "./views/basicGameView"
 
 export default function Home() {
+  
+  const [hydrated, setHydrated] = useState(false)
+  useEffect(() => {
+    setHydrated(true);
+  }, []);
+  if (!hydrated) {
+    return null;
+  }
 
   return (
     <main>
-      <div><i>Hello World!</i></div>
       <BasicGameView />
     </main>
   )
