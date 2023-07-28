@@ -1,7 +1,7 @@
 import {GameController} from "../controller/gameController"
 import {useState, useEffect} from "react"
 
-let gameController: GameController = new GameController();
+const gameController: GameController = new GameController();
 gameController.preGamePreparation();
 
 export function BasicGameView() {
