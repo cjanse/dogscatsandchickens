@@ -7,9 +7,9 @@ gameController.preGamePreparation();
 export function BasicGameView() {
     const [turn, setTurn] = useState(0)
 
-    function onclickHandler(){
+    function onclickHandler(isAttack: boolean){
         setTurn(turn + 1)
-        gameController.testerMove()
+        gameController.testerMove(isAttack)
 
     }
     const opponentHandView =  (<div style={{padding:'10px', display: 'grid', gridTemplateColumns: 'repeat(' + gameController.gameBoard.players[1].hand.length+ ', 1fr)', gap: "10px"}}>{gameController.gameBoard.players[1].hand.map(card => <div style={{border: '2px solid'}}>{card.toString()}</div>)}</div>)
@@ -45,7 +45,10 @@ export function BasicGameView() {
     const myHandView = (<div style={{padding:'10px', display: 'grid', gridTemplateColumns: 'repeat(' + gameController.gameBoard.players[0].hand.length+ ', 1fr)', gap: "10px"}}>{gameController.gameBoard.players[0].hand.map(card => <div style={{border: '2px solid'}}>{card.toString()}</div>)}</div>)
     const deckView = (<div style={{padding: '10px', display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: "10px"}}>{gameController.gameBoard.deck.map(card => <div style={{border: '2px solid'}}>{card.toString()}</div>).reverse()}</div>)   
     const discardView = (<div style={{padding: '10px', display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: "10px"}}>{gameController.gameBoard.discard.map(card => <div style={{border: '2px solid'}}>{card.toString()}</div>).reverse()}</div>)        
-
+    const bottomButtonView = (<div style={{display: "grid", justifyContent: "center", gridTemplateColumns: "1fr 1fr", gap: "20%", padding: "10px"}}>
+    <button style={{backgroundColor: "gray", textAlign: "center", padding: "10px", border: "solid 2px"}} onClick={() => onclickHandler(true)}>Al ataque!</button>
+       <button style={{backgroundColor: "gray", textAlign: "center", padding: "10px", border: "solid 2px"}} onClick={() => onclickHandler(false)}>Reinforce!</button>
+    </div>)
 
     return (
         <div style={{fontSize:"small"}}>
@@ -66,9 +69,8 @@ export function BasicGameView() {
          <hr></hr>
          <div>Discard:</div>
          {discardView}
-         <div style={{display: "grid", justifyContent: "center"}}>
-            <button style={{backgroundColor: "gray", textAlign: "center", padding: "10px"}} onClick={() => onclickHandler()}>Click me!</button>
-         </div>
+         <hr></hr>
+         {bottomButtonView}
         </div>
     )
 }
