@@ -44,18 +44,24 @@ export class GameController {
     *  is a tester method that is not meant to be used in the final version of the 
     *  game but is designed to test current design. */
     step: number = 0;
-    gameOver: boolean = false;
     testerMove(isAttack: boolean): void {
+        console.log("Turn: "+ this.gameBoard.turnNumber + " | Player: " + this.gameBoard.players[this.gameBoard.currentPlayer].name + " | Step: " + this.step)
         /*if the game is over, then reset the board*/
-        if (this.gameOver) {
+        if (this.gameBoard.turnNumber > 1 && this.step == 0 && (this.isWon() || this.isTie())) {
+            if (this.isWon()){
+                console.log("Player: " + this.gameBoard.players[this.gameBoard.currentPlayer].name + " has won!")
+            }
+            else {
+                console.log("Game is tied")
+            }
+            this.step = 0;
             this.gameCleanUp();
             this.preGamePreparation();
             return;
         }
-        console.log("Turn: "+ this.gameBoard.turnNumber + " | Player: " + this.gameBoard.players[this.gameBoard.currentPlayer].name + " | Step: " + this.step)
         //Forces player to put creature/action card down if they don't have a creature in front of them
         //if it is not their first turn
-        if (!this.hasFieldCreature() && (this.gameBoard.turnNumber > 1) && this.gameBoard.players[this.gameBoard.currentPlayer].moves > 0){
+        else if (!this.hasFieldCreature() && (this.gameBoard.turnNumber > 1) && this.gameBoard.players[this.gameBoard.currentPlayer].moves > 0){
             //checks to see if player has a creature card or an action card
             if (this.hasCreature() || this.hasAction()) {
                 //uses action or places creature on field
@@ -68,10 +74,8 @@ export class GameController {
                 this.gameBoard.players[this.gameBoard.currentPlayer].moves -= 1;
             }
             else {
-                console.log("GAME OVER: Player: " + (this.gameBoard.currentPlayer+1)%2 + " has won")
-                this.gameOver = true;
-                this.step = 0;
                 this.gameBoard.nextPlayer();
+                this.step = 0;
                 return;
             }
         }
@@ -79,12 +83,6 @@ export class GameController {
         //for their first turn
         else if (!this.hasFieldCreature()){
             this.addCreatureToField(this.randomCardId("Creature"));
-        } 
-        else if (this.step == 0 && this.isTie()){
-            console.log("Game Over: TIE")
-            this.gameOver = true;
-            this.gameBoard.nextPlayer();
-            return;
         }
         //if step is 0, then player draws a card
         else if (this.step == 0){
@@ -98,10 +96,8 @@ export class GameController {
                 this.attack(this.getCreatureMyField(), this.getCreatureOpponentField())
                 this.gameBoard.players[this.gameBoard.currentPlayer].moves = 0;
                 if (this.gameBoard.players[this.gameBoard.currentPlayer].field.length == 0) {
-                    console.log("GAME OVER: Player: " + (this.gameBoard.currentPlayer+1)%2 + " has won");
-                    this.gameOver = true;
-                    this.step = 0;
                     this.gameBoard.nextPlayer();
+                    this.step = 0;
                     return;
                 }
             }
@@ -463,10 +459,13 @@ export class GameController {
         })
 
         //Resetting class variables
-        this.gameOver = false;
         this.step = 0;
         this.gameBoard.currentPlayer = 0;
         this.gameBoard.turnNumber = 0;
+    }
+
+    isWon(): boolean {
+        return this.gameBoard.players[(this.gameBoard.currentPlayer+1)%2].field.length == 0;
     }
 
     /* Checks to see if the game is a tie (no cards can be placed & creatures can not defeat each other & the deck is empty) */
@@ -474,8 +473,8 @@ export class GameController {
         if (this.gameBoard.deck.length > 0) return false;
         else if ((this.gameBoard.players[this.gameBoard.currentPlayer].hand.length > 0) && (this.canPlaceUpgrade())) return false;
         else if (this.gameBoard.players[(this.gameBoard.currentPlayer+1)%2].hand.length > 0) return false;
-        else if (this.gameBoard.players[this.gameBoard.currentPlayer].field.some(function (value, index, array) {return ((value[0] as Creature).creatureType !== (array[0][0] as Creature).creatureType) || ((value[0] as Creature).creatureType == "Dog" && (value[0] as Creature).matched)})) return false;
-        else if (this.gameBoard.players[(this.gameBoard.currentPlayer+1)%2].field.some(function (value, index, array) {return ((value[0] as Creature).creatureType !== (array[0][0] as Creature).creatureType) || ((value[0] as Creature).creatureType == "Dog" && (value[0] as Creature).matched)})) return false;
+        else if (this.gameBoard.players[this.gameBoard.currentPlayer].field.length == 0 || (this.gameBoard.players[this.gameBoard.currentPlayer].field.some(function (value, index, array) {return ((value[0] as Creature).creatureType !== (array[0][0] as Creature).creatureType) || ((value[0] as Creature).creatureType == "Dog" && (value[0] as Creature).matched)}))) return false;
+        else if (this.gameBoard.players[(this.gameBoard.currentPlayer+1)%2].field.length == 0 || (this.gameBoard.players[(this.gameBoard.currentPlayer+1)%2].field.some(function (value, index, array) {return ((value[0] as Creature).creatureType !== (array[0][0] as Creature).creatureType) || ((value[0] as Creature).creatureType == "Dog" && (value[0] as Creature).matched)}))) return false;
         else if ((this.gameBoard.players[this.gameBoard.currentPlayer].field[0][0] as Creature).creatureType !== (this.gameBoard.players[(this.gameBoard.currentPlayer+1)%2].field[0][0] as Creature).creatureType) return false;
         else return true;
     }
