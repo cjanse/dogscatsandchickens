@@ -40,14 +40,46 @@ export class GameController {
         this.gameBoard.players[1].hand.push(this.gameBoard.deck.splice(this.gameBoard.deck.length-1, 1)[0])
     }
 
+    //Reset the board after game is over
+    endOfGame(): void {
+        /*if the game is over, then reset the board*/
+        if (this.isWon()){
+            console.log("Player: " + this.gameBoard.players[this.gameBoard.currentPlayer].name + " has won!")
+        }
+        else if (this.isLost()){
+            console.log("Player: " + this.gameBoard.players[(this.gameBoard.currentPlayer+1)%2].name + " has won!")
+        }
+        else {
+            console.log("Game is tied")
+        }
+        this.gameCleanUp();
+        this.preGamePreparation();
+    }
+
+    isGameOver(): boolean {
+        return this.gameBoard.players[this.gameBoard.currentPlayer].turnNumber > 0 && (this.isWon() || this.isTie() || this.isLost())
+    }
+
+    //Checks to see if the end of the turn is reached
+    //if it is, then it goes to next player
+    endofTurn(): void {
+        if (this.isGameOver()){
+            this.endOfGame();
+        }
+        else if (this.gameBoard.players[this.gameBoard.currentPlayer].moves == 0 && this.gameBoard.players[this.gameBoard.currentPlayer].hand.length <= 5)
+        {
+            this.gameBoard.nextPlayer();
+        }
+    }
+
     /* This function can be called multiple times to do moves at random...
     *  is a tester method that is not meant to be used in the final version of the 
     *  game but is designed to test current design. */
     step: number = 0;
     testerMove(isAttack: boolean): void {
-        console.log("Turn: "+ this.gameBoard.turnNumber + " | Player: " + this.gameBoard.players[this.gameBoard.currentPlayer].name + " | Step: " + this.step)
+        console.log("Turn: "+ this.gameBoard.players[this.gameBoard.currentPlayer].turnNumber + " | Player: " + this.gameBoard.players[this.gameBoard.currentPlayer].name + " | Step: " + this.step)
         /*if the game is over, then reset the board*/
-        if (this.gameBoard.turnNumber > 1 && this.step == 0 && (this.isWon() || this.isTie())) {
+        if (this.gameBoard.players[this.gameBoard.currentPlayer].turnNumber > 0 && this.step == 0 && (this.isWon() || this.isTie())) {
             if (this.isWon()){
                 console.log("Player: " + this.gameBoard.players[this.gameBoard.currentPlayer].name + " has won!")
             }
@@ -61,7 +93,7 @@ export class GameController {
         }
         //Forces player to put creature/action card down if they don't have a creature in front of them
         //if it is not their first turn
-        else if (!this.hasFieldCreature() && (this.gameBoard.turnNumber > 1) && this.gameBoard.players[this.gameBoard.currentPlayer].moves > 0){
+        else if (!this.hasFieldCreature() && (this.gameBoard.players[this.gameBoard.currentPlayer].turnNumber > 0) && this.gameBoard.players[this.gameBoard.currentPlayer].moves > 0){
             //checks to see if player has a creature card or an action card
             if (this.hasCreature() || this.hasAction()) {
                 //uses action or places creature on field
@@ -92,7 +124,7 @@ export class GameController {
         //chooses between fighting turn & reinforcement turn
         else if (this.step == 1 && this.gameBoard.players[this.gameBoard.currentPlayer].moves > 0){
             //Chooses attack turn
-            if (isAttack && this.gameBoard.players[this.gameBoard.currentPlayer].moves == 2 && this.gameBoard.turnNumber > 1){
+            if (isAttack && this.gameBoard.players[this.gameBoard.currentPlayer].moves == 2 && this.gameBoard.players[this.gameBoard.currentPlayer].turnNumber > 0){
                 this.attack(this.getCreatureMyField(), this.getCreatureOpponentField())
                 this.gameBoard.players[this.gameBoard.currentPlayer].moves = 0;
                 if (this.gameBoard.players[this.gameBoard.currentPlayer].field.length == 0) {
@@ -151,6 +183,7 @@ export class GameController {
 
     /* Draws a card for a player */
     drawCard(): void{
+        console.log("Player: " + this.gameBoard.players[this.gameBoard.currentPlayer].name + " draws " + this.gameBoard.deck[this.gameBoard.deck.length-1].id)
         this.gameBoard.players[this.gameBoard.currentPlayer].hand.push(this.gameBoard.deck.splice(this.gameBoard.deck.length-1, 1)[0])
     }
 
@@ -192,16 +225,19 @@ export class GameController {
 
     /* Adds Creature on field */
     addCreatureToField(cardId: number): void {
+        console.log("Player: " + this.gameBoard.players[this.gameBoard.currentPlayer].name + " places " + cardId + " on the field.")
         this.gameBoard.players[this.gameBoard.currentPlayer].field.push([this.gameBoard.players[this.gameBoard.currentPlayer].hand.filter(function (value, index, array) {return (value.id == cardId)})[0]])
         this.gameBoard.players[this.gameBoard.currentPlayer].hand.splice(this.gameBoard.players[this.gameBoard.currentPlayer].hand.indexOf(this.gameBoard.players[this.gameBoard.currentPlayer].hand.filter(function (value, index, array) {return (value.id == cardId)})[0]),1)[0]
         if (this.checkForMatchedActivatedChicken()) {
             (this.gameBoard.players[this.gameBoard.currentPlayer].field[this.gameBoard.players[this.gameBoard.currentPlayer].field.length-1][0] as Creature).facedUp = true
         }
+        this.endofTurn();
     }
 
     /* Uses action card and discards it
     WILL NEED TO BE MODIFIED*/
     useAction(cardId: number): void {
+        console.log("Player: " + this.gameBoard.players[this.gameBoard.currentPlayer].name + " uses " + cardId)
         if (cardId == 301){
             //Uses Beach Spirits
             if (this.gameBoard.discard.some(function (value, index, array) {return (value instanceof Upgrade)})) this.getCardFromDiscard(GameBoard.shuffle(this.gameBoard.discard.filter(function (value, index, array) {return (value instanceof Upgrade)}))[0].id)
@@ -244,6 +280,7 @@ export class GameController {
             this.makeFaceUp(this.getRandomCardOnOpponentField())
         }
         this.discardCardFromHand(cardId)
+        this.endofTurn();
     }
 
     /*ensures that an upgrade card can be placed on the field*/
@@ -259,15 +296,18 @@ export class GameController {
 
     /*Places upgrade on specified creature*/
     placeUpgradeOnCreature(cardId: number, creatureCardId: number): void {
+        console.log("Player: " + this.gameBoard.players[this.gameBoard.currentPlayer].name + " places " + cardId + " on " + creatureCardId)
         const indexOfCreature = this.gameBoard.players[this.gameBoard.currentPlayer].field.indexOf(this.gameBoard.players[this.gameBoard.currentPlayer].field.filter(function (value, index, array) {return value[0].id == creatureCardId})[0])
         this.gameBoard.players[this.gameBoard.currentPlayer].field[indexOfCreature].push(this.gameBoard.players[this.gameBoard.currentPlayer].hand.splice(this.gameBoard.players[this.gameBoard.currentPlayer].hand.indexOf(this.gameBoard.players[this.gameBoard.currentPlayer].hand.filter(function (value, index, array) {return (value.id == cardId)})[0]),1)[0])
         if (this.checkForMatchedActivatedChicken()) {
             (this.gameBoard.players[this.gameBoard.currentPlayer].field[indexOfCreature][this.gameBoard.players[this.gameBoard.currentPlayer].field[indexOfCreature].length-1] as Upgrade).facedUp = true
         }
+        this.endofTurn();
     }
 
     /* Discards specified card from hand */
     discardCardFromHand(cardId: number): void{
+        console.log("Player: " + this.gameBoard.players[this.gameBoard.currentPlayer].name + " gets rid of " + cardId)
         this.gameBoard.discard.push(this.gameBoard.players[this.gameBoard.currentPlayer].hand.splice(this.gameBoard.players[this.gameBoard.currentPlayer].hand.indexOf(this.gameBoard.players[this.gameBoard.currentPlayer].hand.filter(function (value, index, array) {return (value.id == cardId)})[0]),1)[0])
         if (this.gameBoard.discard[this.gameBoard.discard.length-1] instanceof Creature) {
             (this.gameBoard.discard[this.gameBoard.discard.length-1] as Creature).facedUp = false;
@@ -275,7 +315,8 @@ export class GameController {
         } 
         else if (this.gameBoard.discard[this.gameBoard.discard.length-1] instanceof Upgrade) {
             (this.gameBoard.discard[this.gameBoard.discard.length-1] as Upgrade).facedUp = false;
-        } 
+        }
+        this.endofTurn(); 
     }
 
     /* Gets a specified card from the discard pile 
@@ -321,11 +362,13 @@ export class GameController {
 
     /*Matches creature cards using id*/
     matchCreature(cardId: number): void {
+        console.log("Player: " + this.gameBoard.players[this.gameBoard.currentPlayer].name + " matches " + cardId)
         const indexOfCreature = this.gameBoard.players[this.gameBoard.currentPlayer].field.indexOf(this.gameBoard.players[this.gameBoard.currentPlayer].field.filter(function (value, index, array) {return Math.floor(value[0].id) == Math.floor(cardId)})[0]);
         this.gameBoard.players[this.gameBoard.currentPlayer].field[indexOfCreature].splice(1, 0, this.gameBoard.players[this.gameBoard.currentPlayer].hand.splice(this.gameBoard.players[this.gameBoard.currentPlayer].hand.indexOf(this.gameBoard.players[this.gameBoard.currentPlayer].hand.filter(function (value, index, array) {return (value.id == cardId)})[0]),1)[0]);
         (this.gameBoard.players[this.gameBoard.currentPlayer].field[indexOfCreature][0] as Creature).matched = true;
         (this.gameBoard.players[this.gameBoard.currentPlayer].field[indexOfCreature][1] as Creature).matched = true;
         if ((this.gameBoard.players[this.gameBoard.currentPlayer].field[indexOfCreature][0] as Creature).facedUp) this.matchCreatureActivateAbility(cardId)
+        this.endofTurn();
     }
 
     /*Activates Matched Creature's ability*/
@@ -360,6 +403,9 @@ export class GameController {
 
     /*Execute Attack Turn*/
     attack(myCreatureId: number, opponentCreatureId: number): void{
+        //Makes opponent creature faced up when attacked
+        this.makeFaceUp(opponentCreatureId)
+        
         //player defeats opponent 
         if ((Math.floor(myCreatureId) <= 103 && Math.floor(opponentCreatureId) >= 107) || ((Math.floor(myCreatureId) >= 104 && Math.floor(myCreatureId) <= 106) && Math.floor(opponentCreatureId) <= 103) || (Math.floor(myCreatureId) >= 107 && (Math.floor(opponentCreatureId) >= 104 && Math.floor(opponentCreatureId) <= 106))){
             this.defeatedCreatureUpgrades(opponentCreatureId, myCreatureId)
@@ -374,6 +420,7 @@ export class GameController {
         else {
             console.log(myCreatureId + " does not impact " + opponentCreatureId)
         }
+        this.endofTurn();
     }
 
     /*Checks to see if opponent's defeated creature has upgrade cards to use and then activates them accordingly*/
@@ -461,11 +508,16 @@ export class GameController {
         //Resetting class variables
         this.step = 0;
         this.gameBoard.currentPlayer = 0;
-        this.gameBoard.turnNumber = 0;
+        this.gameBoard.players[0].turnNumber = 0;
+        this.gameBoard.players[1].turnNumber = 0;
     }
 
     isWon(): boolean {
-        return this.gameBoard.players[(this.gameBoard.currentPlayer+1)%2].field.length == 0;
+        return this.gameBoard.players[(this.gameBoard.currentPlayer+1)%2].field.length == 0 && !(this.gameBoard.players[(this.gameBoard.currentPlayer+1)%2].hand.some(function(value, index, array) {return (value instanceof Creature)}));
+    }
+
+    isLost(): boolean {
+        return this.gameBoard.players[this.gameBoard.currentPlayer].field.length == 0 && this.gameBoard.players[this.gameBoard.currentPlayer].moves == 0;
     }
 
     /* Checks to see if the game is a tie (no cards can be placed & creatures can not defeat each other & the deck is empty) */

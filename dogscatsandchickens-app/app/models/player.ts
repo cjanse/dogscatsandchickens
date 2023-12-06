@@ -8,6 +8,7 @@ export class Player{
     hand: Card[] = [];
     field: Card[][] = [];
     moves: number;
+    turnNumber: number = 0
 
     constructor(name:string = "Carter"){
         this.name = name;

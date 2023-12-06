@@ -1,15 +1,23 @@
 import {GameController} from "../controller/gameController"
+import { PlayerController } from "../controller/playerController";
 import {useState, useEffect} from "react"
+import { AIPlayerController } from "../controller/AIPlayerController";
 
 const gameController: GameController = new GameController();
 gameController.preGamePreparation();
+
+const playerController: PlayerController = new PlayerController(gameController)
+const aiPlayerController: AIPlayerController = new AIPlayerController(gameController)
 
 export function BasicGameView() {
     const [turn, setTurn] = useState(0)
 
     function onclickHandler(isAttack: boolean){
+        playerController.testerMove(isAttack)
+        if (gameController.gameBoard.currentPlayer == 1) {
+            aiPlayerController.testerMove();
+        }
         setTurn(turn + 1)
-        gameController.testerMove(isAttack)
 
     }
     const opponentHandView =  (<div style={{padding:'10px', display: 'grid', gridTemplateColumns: 'repeat(' + gameController.gameBoard.players[1].hand.length+ ', 1fr)', gap: "10px"}}>{gameController.gameBoard.players[1].hand.map(card => <div style={{border: '2px solid'}}>{card.toString()}</div>)}</div>)
