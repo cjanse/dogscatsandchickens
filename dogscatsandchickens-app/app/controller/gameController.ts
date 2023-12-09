@@ -66,7 +66,7 @@ export class GameController {
         if (this.isGameOver()){
             this.endOfGame();
         }
-        else if (this.gameBoard.players[this.gameBoard.currentPlayer].moves == 0 && this.gameBoard.players[this.gameBoard.currentPlayer].hand.length <= 5)
+        else
         {
             this.gameBoard.nextPlayer();
         }
@@ -231,7 +231,6 @@ export class GameController {
         if (this.checkForMatchedActivatedChicken()) {
             (this.gameBoard.players[this.gameBoard.currentPlayer].field[this.gameBoard.players[this.gameBoard.currentPlayer].field.length-1][0] as Creature).facedUp = true
         }
-        this.endofTurn();
     }
 
     /* Uses action card and discards it
@@ -280,12 +279,23 @@ export class GameController {
             this.makeFaceUp(this.getRandomCardOnOpponentField())
         }
         this.discardCardFromHand(cardId)
-        this.endofTurn();
     }
 
-    /*ensures that an upgrade card can be placed on the field*/
-    canPlaceUpgrade(): boolean {
-        return this.gameBoard.players[this.gameBoard.currentPlayer].field.some(function (value, index, array) {return value.length < 3  || (value.length < 4 && value[1] instanceof Creature)})
+    /*Uses bird army action card*/
+    useBirdArmy(cardId: number, type: string){
+        this.stealCard(type);
+        this.discardCardFromHand(cardId)
+    }
+
+    /*ensures that an upgrade card can be placed on the field or on a specific card*/
+    canPlaceUpgrade(cardId: number = 0): boolean {
+        if (cardId == 0){
+            return this.gameBoard.players[this.gameBoard.currentPlayer].field.some(function (value, index, array) {return value.length < 3  || (value.length < 4 && value[1] instanceof Creature)})
+        }
+        else {
+            const indexOfCreature = this.gameBoard.players[this.gameBoard.currentPlayer].field.indexOf(this.gameBoard.players[this.gameBoard.currentPlayer].field.filter(function (value, index, array) {return Math.floor(value[0].id) == Math.floor(cardId)})[0])
+            return this.gameBoard.players[this.gameBoard.currentPlayer].field[indexOfCreature].length < 3  || (this.gameBoard.players[this.gameBoard.currentPlayer].field[indexOfCreature].length < 4 && this.gameBoard.players[this.gameBoard.currentPlayer].field[indexOfCreature][1] instanceof Creature)
+        }
     }
 
     /*picks random creature id to add upgrade to*/
@@ -297,12 +307,11 @@ export class GameController {
     /*Places upgrade on specified creature*/
     placeUpgradeOnCreature(cardId: number, creatureCardId: number): void {
         console.log("Player: " + this.gameBoard.players[this.gameBoard.currentPlayer].name + " places " + cardId + " on " + creatureCardId)
-        const indexOfCreature = this.gameBoard.players[this.gameBoard.currentPlayer].field.indexOf(this.gameBoard.players[this.gameBoard.currentPlayer].field.filter(function (value, index, array) {return value[0].id == creatureCardId})[0])
+        const indexOfCreature = this.gameBoard.players[this.gameBoard.currentPlayer].field.indexOf(this.gameBoard.players[this.gameBoard.currentPlayer].field.filter(function (value, index, array) {return Math.floor(value[0].id) == Math.floor(creatureCardId)})[0])
         this.gameBoard.players[this.gameBoard.currentPlayer].field[indexOfCreature].push(this.gameBoard.players[this.gameBoard.currentPlayer].hand.splice(this.gameBoard.players[this.gameBoard.currentPlayer].hand.indexOf(this.gameBoard.players[this.gameBoard.currentPlayer].hand.filter(function (value, index, array) {return (value.id == cardId)})[0]),1)[0])
         if (this.checkForMatchedActivatedChicken()) {
             (this.gameBoard.players[this.gameBoard.currentPlayer].field[indexOfCreature][this.gameBoard.players[this.gameBoard.currentPlayer].field[indexOfCreature].length-1] as Upgrade).facedUp = true
         }
-        this.endofTurn();
     }
 
     /* Discards specified card from hand */
@@ -316,7 +325,6 @@ export class GameController {
         else if (this.gameBoard.discard[this.gameBoard.discard.length-1] instanceof Upgrade) {
             (this.gameBoard.discard[this.gameBoard.discard.length-1] as Upgrade).facedUp = false;
         }
-        this.endofTurn(); 
     }
 
     /* Gets a specified card from the discard pile 
@@ -352,7 +360,39 @@ export class GameController {
 
     /*Makes the specified card face up on opponent's field*/
     makeFaceUp(cardId: number): void {
-        this.gameBoard.players[(this.gameBoard.currentPlayer+1)%2].field.forEach(function (value, index, array) {value.forEach(function (value, index, array) {if (value.id == cardId && value instanceof Creature) (value as Creature).facedUp = true; else if (value.id == cardId && value instanceof Upgrade) (value as Upgrade).facedUp = true;})})
+        let activateChickenAbility: boolean = false;
+        let opponent: boolean = false;
+        this.gameBoard.players[this.gameBoard.currentPlayer].field.forEach(function (value, index, array) {value.forEach(function (value, index, array) {
+            if (value.id == cardId && value instanceof Creature) { 
+                (value as Creature).facedUp = true; 
+                if (index == 1){
+                    (array[0] as Creature).facedUp = true;
+                }
+                else if ((value as Creature).matched && index==0){
+                    (array[1] as Creature).facedUp = true;
+                }
+                if ((value as Creature).matched && (value as Creature).creatureType == "Chicken"){
+                    activateChickenAbility = true;
+                    opponent = true;
+                }
+            }
+            else if (value.id == cardId && value instanceof Upgrade) (value as Upgrade).facedUp = true;})})
+        this.gameBoard.players[(this.gameBoard.currentPlayer+1)%2].field.forEach(function (value, index, array) {value.forEach(function (value, index, array) {
+            if (value.id == cardId && value instanceof Creature) { 
+                (value as Creature).facedUp = true; 
+                if (index == 1){
+                    (array[0] as Creature).facedUp = true;
+                }
+                else if ((value as Creature).matched && index==0){
+                    (array[1] as Creature).facedUp = true;
+                }
+                if ((value as Creature).matched && (value as Creature).creatureType == "Chicken"){
+                    activateChickenAbility = true;
+                    opponent = false;
+                }
+            } 
+            else if (value.id == cardId && value instanceof Upgrade) (value as Upgrade).facedUp = true;})})
+            if (activateChickenAbility) this.revealAllOpponentCard(opponent)
     }
 
     /*Checks to see if creature card on the field can be matched by specified card*/
@@ -367,8 +407,7 @@ export class GameController {
         this.gameBoard.players[this.gameBoard.currentPlayer].field[indexOfCreature].splice(1, 0, this.gameBoard.players[this.gameBoard.currentPlayer].hand.splice(this.gameBoard.players[this.gameBoard.currentPlayer].hand.indexOf(this.gameBoard.players[this.gameBoard.currentPlayer].hand.filter(function (value, index, array) {return (value.id == cardId)})[0]),1)[0]);
         (this.gameBoard.players[this.gameBoard.currentPlayer].field[indexOfCreature][0] as Creature).matched = true;
         (this.gameBoard.players[this.gameBoard.currentPlayer].field[indexOfCreature][1] as Creature).matched = true;
-        if ((this.gameBoard.players[this.gameBoard.currentPlayer].field[indexOfCreature][0] as Creature).facedUp) this.matchCreatureActivateAbility(cardId)
-        this.endofTurn();
+        if ((this.gameBoard.players[this.gameBoard.currentPlayer].field[indexOfCreature][0] as Creature).facedUp) this.matchCreatureActivateAbility(cardId);
     }
 
     /*Activates Matched Creature's ability*/
@@ -382,8 +421,9 @@ export class GameController {
     }
 
     /*Reveals all Creature on opponent's field*/
-    revealAllOpponentCard(): void {
-        this.gameBoard.players[(this.gameBoard.currentPlayer+1)%2].field.forEach(function (value, index, array) {value.forEach(function (value, index, array) {if (value instanceof Creature) (value as Creature).facedUp = true; else {(value as Upgrade).facedUp = true}})})
+    revealAllOpponentCard(opponent: boolean = true): void {
+        if (opponent) this.gameBoard.players[(this.gameBoard.currentPlayer+1)%2].field.forEach(function (value, index, array) {value.forEach(function (value, index, array) {if (value instanceof Creature) (value as Creature).facedUp = true; else {(value as Upgrade).facedUp = true}})});
+        else this.gameBoard.players[this.gameBoard.currentPlayer].field.forEach(function (value, index, array) {value.forEach(function (value, index, array) {if (value instanceof Creature) (value as Creature).facedUp = true; else {(value as Upgrade).facedUp = true}})})
     }
 
     /*Checks to see if there is an activated matching chicken on opponent's field*/
@@ -403,11 +443,15 @@ export class GameController {
 
     /*Execute Attack Turn*/
     attack(myCreatureId: number, opponentCreatureId: number): void{
-        //Makes opponent creature faced up when attacked
+        //Makes boths creature faced up when attacking
+        this.makeFaceUp(myCreatureId)
         this.makeFaceUp(opponentCreatureId)
-        
+
+        //Checks to see if the card attacking is a matched dog, if so, attacker always wins
+        const myMatchedDog: boolean = this.gameBoard.players[this.gameBoard.currentPlayer].field.some(function(value,index,array) {return Math.floor(value[0].id) == Math.floor(myCreatureId) && (value[0] as Creature).matched && (value[0] as Creature).creatureType == "Dog"})
+
         //player defeats opponent 
-        if ((Math.floor(myCreatureId) <= 103 && Math.floor(opponentCreatureId) >= 107) || ((Math.floor(myCreatureId) >= 104 && Math.floor(myCreatureId) <= 106) && Math.floor(opponentCreatureId) <= 103) || (Math.floor(myCreatureId) >= 107 && (Math.floor(opponentCreatureId) >= 104 && Math.floor(opponentCreatureId) <= 106))){
+        if ((Math.floor(myCreatureId) <= 103 && Math.floor(opponentCreatureId) >= 107) || ((Math.floor(myCreatureId) >= 104 && Math.floor(myCreatureId) <= 106) && Math.floor(opponentCreatureId) <= 103) || (Math.floor(myCreatureId) >= 107 && (Math.floor(opponentCreatureId) >= 104 && Math.floor(opponentCreatureId) <= 106)) || myMatchedDog){
             this.defeatedCreatureUpgrades(opponentCreatureId, myCreatureId)
             console.log(myCreatureId + "(" + this.gameBoard.players[this.gameBoard.currentPlayer].name + ") defeats " + opponentCreatureId + "(" + this.gameBoard.players[(this.gameBoard.currentPlayer+1)%2].name + ")")
         }
@@ -420,7 +464,6 @@ export class GameController {
         else {
             console.log(myCreatureId + " does not impact " + opponentCreatureId)
         }
-        this.endofTurn();
     }
 
     /*Checks to see if opponent's defeated creature has upgrade cards to use and then activates them accordingly*/
@@ -479,6 +522,12 @@ export class GameController {
     /*Discards creature and all attached upgrades on specified player's field*/
     discardCreatureOnField(creatureId: number, playerNum: number): void{
         const indexOfCreature = this.gameBoard.players[playerNum].field.indexOf(this.gameBoard.players[playerNum].field.filter(function (value, index, array) {return Math.floor(value[0].id) == Math.floor(creatureId)})[0]);
+        (this.gameBoard.players[playerNum].field[indexOfCreature][0] as Creature).facedUp = false
+        if ((this.gameBoard.players[playerNum].field[indexOfCreature][0] as Creature).matched){
+            (this.gameBoard.players[playerNum].field[indexOfCreature][0] as Creature).matched = false;
+            (this.gameBoard.players[playerNum].field[indexOfCreature][1] as Creature).facedUp = false;
+            (this.gameBoard.players[playerNum].field[indexOfCreature][1] as Creature).matched = false;
+        }
         this.gameBoard.discard.push(...this.gameBoard.players[playerNum].field[indexOfCreature])
         this.gameBoard.players[playerNum].field.splice(indexOfCreature,1)
     }
@@ -510,6 +559,8 @@ export class GameController {
         this.gameBoard.currentPlayer = 0;
         this.gameBoard.players[0].turnNumber = 0;
         this.gameBoard.players[1].turnNumber = 0;
+        this.gameBoard.players[0].moves = 2;
+        this.gameBoard.players[1].moves = 2;
     }
 
     isWon(): boolean {
