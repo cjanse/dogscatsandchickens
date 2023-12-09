@@ -2,6 +2,7 @@
 'use client'
 import { useState, useEffect } from 'react'
 import {BasicGameView} from "./views/basicGameView"
+import {GameView} from "./views/gameView"
 
 export default function Home() {
   
@@ -15,7 +16,7 @@ export default function Home() {
 
   return (
     <main>
-      <BasicGameView />
+      <GameView />
     </main>
   )
 }
