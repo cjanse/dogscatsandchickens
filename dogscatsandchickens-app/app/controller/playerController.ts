@@ -412,7 +412,7 @@ export class PlayerController {
                 this.forestSpiritsIP = false;
                 this.gameController.discardCardFromHand(302) 
             }
-            else if (200 > cardId && cardId < 300){
+            else if (cardId > 200 && cardId < 300){
                 this.gameController.getCardFromDiscard(cardId)
                 this.player.moves -= 1;
                 this.beachSpiritsIP = false;
