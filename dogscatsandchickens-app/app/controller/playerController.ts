@@ -34,8 +34,9 @@ export class PlayerController {
     riverSpiritsIP: boolean = false;
     birdArmyIP: boolean = false;
     birdArmyCard: number = 0;
-    teaIP = false
+    teaIP: boolean = false
     teaCard: number = 0;
+    recoveryTurn: boolean = false;
 
 
     /* This function can be called multiple times to do moves at random...
@@ -139,12 +140,16 @@ export class PlayerController {
 
     /*Checks to see if player can draw card*/
     canDraw(cardId: number){
-        return cardId == this.gameBoard.deck[this.gameBoard.deck.length-1].id && this.player.field.length > 0 && this.player.moves == 2 && this.player.turnNumber > 0 && !this.hasDrawn && !this.actionIP();
+        return cardId == this.gameBoard.deck[this.gameBoard.deck.length-1].id && this.player.field.length > 0 && (this.player.moves == 2 || this.recoveryTurn) && this.player.turnNumber > 0 && !this.hasDrawn && !this.actionIP();
     }
 
     /*Checks to see if the card in hand can be used*/
     canUseHandCard(cardId: number){
-        if (cardId > 100 && cardId < 200){
+        if (this.player.field.length == 0 && this.player.turnNumber > 0 && (this.player.moves == 2 || this.recoveryTurn)){
+            this.recoveryTurn = true;
+            return (cardId > 100 && cardId < 200) || (cardId == 302 && this.gameBoard.discard.some(function(value, index, array) {return (value instanceof Creature)})) || ((cardId == 304 || cardId == 305) && this.gameBoard.players[(this.gameBoard.currentPlayer+1)%2].hand.some(function(value, index, array) {return (value instanceof Creature)}))
+        }
+        else if (cardId > 100 && cardId < 200){
             return ((this.player.turnNumber == 0 && this.player.moves == 2) || (this.player.turnNumber > 0 && this.player.moves > 0 && (this.hasDrawn || this.gameBoard.deck.length == 0) && !this.actionIP())) || (this.placeMatchedCreatureIP && this.matchCreature == cardId);
         }
         else if (cardId > 200 && cardId < 300){
@@ -245,6 +250,7 @@ export class PlayerController {
     drawCard(cardId: number) {
         console.log(cardId + " clicked from deck")
         if (this.canDraw(cardId)){
+            this.recoveryTurn = false;
             console.log(cardId + " drawn")
             this.gameController.drawCard();
             this.hasDrawn = true;
