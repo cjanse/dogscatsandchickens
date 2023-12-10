@@ -3,6 +3,8 @@ import { PlayerController } from "../controller/playerController";
 import {useState, useEffect} from "react"
 import { AIPlayerController } from "../controller/AIPlayerController";
 import {Card} from "../models/card"
+import {Creature} from "../models/creature"
+import {Upgrade} from "../models/upgrade"
 
 //Import all images
 import creature from "../../assets/cards/creature.jpg"
@@ -170,7 +172,13 @@ export function GameView() {
 
     //gets image for opponent field
     function setOpponentFieldImage(card: Card){
-        return getTypeFromId(card.id)
+        if ((card instanceof Creature && (card as Creature).facedUp)||(card instanceof Upgrade && (card as Upgrade).facedUp))
+        {
+            return getImageFromId(card.id)
+        }
+        else {
+            return getTypeFromId(card.id)
+        }
     }
 
     //gets image for player field
@@ -190,7 +198,9 @@ export function GameView() {
             )}
         </div>
     )
-    const deckView = (<div style={{padding: '10px', backgroundColor: '#f39c12'}}><img style={{border: '2px solid', borderColor: "black"}} /*onClick={() => onclickDrawCard(card.id)}>{card.toString()}*/ src={setDeckImage(gameController.gameBoard.deck[gameController.gameBoard.deck.length-1]).src}/></div>)
+    let deckView;
+    if (gameController.gameBoard.deck.length>0) {deckView = (<div style={{padding: '10px', backgroundColor: '#f39c12'}}><img style={{border: '2px solid', borderColor: "black"}} /*onClick={() => onclickDrawCard(card.id)}>{card.toString()}*/ src={setDeckImage(gameController.gameBoard.deck[gameController.gameBoard.deck.length-1]).src}/></div>)}
+    else {deckView = (<div style={{padding: '10px', backgroundColor: '#f39c12'}}></div>)}
     const myFieldView = (
         <div style={{backgroundColor: '#5abaff',padding:'10px', display:'grid', gridTemplateColumns: 'repeat(' +'1'/*gameController.gameBoard.players[1].field.length*/+', 1fr)', gap: "10px"}}>
             {gameController.gameBoard.players[0].field.map(cards=>
@@ -201,7 +211,9 @@ export function GameView() {
             )}
         </div>
     )
-    const discardView = (<div style={{padding: '10px', backgroundColor: '#2ecc71'}}><img style={{border: '2px solid', borderColor: "black"}} /*onClick={() => onclickDrawCard(card.id)}>{card.toString()}*/ src={setDiscardImage(gameController.gameBoard.deck[0]/*TODO: SET CORRECT IMAGE*/).src}/></div>)
+    let discardView
+    if (gameController.gameBoard.discard.length > 0) {discardView = (<div style={{padding: '10px', backgroundColor: '#2ecc71'}}><img style={{border: '2px solid', borderColor: "black"}} /*onClick={() => onclickDrawCard(card.id)}>{card.toString()}*/ src={setDiscardImage(gameController.gameBoard.discard[gameController.gameBoard.discard.length-1]).src}/></div>)}
+    else {{discardView = (<div style={{padding: '10px', backgroundColor: '#2ecc71'}}></div>)}}
     const fieldView = (<div style={{ display: 'grid', gridTemplateColumns: '3fr 1fr'}}>
         {opponentFieldView}
         {deckView}
