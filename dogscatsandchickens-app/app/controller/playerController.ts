@@ -5,7 +5,6 @@ import {Card} from "../models/card";
 import {Player} from "../models/player";
 import {GameBoard} from "../models/gameboard"
 import {GameController} from "./gameController";
-import { The_Girl_Next_Door } from "next/font/google";
 
 export class PlayerController {
 
