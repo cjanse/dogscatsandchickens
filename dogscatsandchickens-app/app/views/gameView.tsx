@@ -349,7 +349,7 @@ export function GameView() {
     if (gameController.gameBoard.deck.length>0) {deckView = (<div style={{padding: '10px', backgroundColor: '#f39c12'}}><img style={{border: '2px solid', borderColor: deckCardStyle(gameController.gameBoard.deck[gameController.gameBoard.deck.length-1].id)}} onClick={() => onclickDrawCard(gameController.gameBoard.deck[gameController.gameBoard.deck.length-1].id)} src={setDeckImage(gameController.gameBoard.deck[gameController.gameBoard.deck.length-1]).src}/></div>)}
     else {deckView = (<div style={{padding: '10px', backgroundColor: '#f39c12'}}></div>)}
     const myFieldView = (
-        <div style={{backgroundColor: '#5abaff',padding:'10px', display:'grid', gridTemplateColumns: 'repeat(' +gameController.gameBoard.players[1].field.length+', 1fr)', gap: "10px"}}>
+        <div style={{backgroundColor: '#5abaff',padding:'10px', display:'grid', gridTemplateColumns: 'repeat(' +gameController.gameBoard.players[0].field.length+', 1fr)', gap: "10px"}}>
             {gameController.gameBoard.players[0].field.map(cards=>
                 <div style={{padding:'10px', display:'grid', gridTemplateColumns: '1fr'}}>
                     {cards.map(card=>
