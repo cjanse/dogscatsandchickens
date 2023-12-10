@@ -495,6 +495,11 @@ export class GameController {
             if (!(this.gameBoard.players[(this.gameBoard.currentPlayer+1)%2].field[indexOfOpponentCreature].length < 2 || (this.gameBoard.players[(this.gameBoard.currentPlayer+1)%2].field[indexOfOpponentCreature].length < 3 && this.gameBoard.players[(this.gameBoard.currentPlayer+1)%2].field[indexOfOpponentCreature][1] instanceof Creature))){
                 this.discardOpponentUpgrade(indexOfOpponentCreature)
             }
+            let i;
+            for (i = 0; i <this.gameBoard.players[(this.gameBoard.currentPlayer+1)%2].field[indexOfOpponentCreature].length; i++){
+                (this.gameBoard.players[(this.gameBoard.currentPlayer+1)%2].field[indexOfOpponentCreature][0] as Creature).facedUp = false;
+                (this.gameBoard.players[(this.gameBoard.currentPlayer+1)%2].field[indexOfOpponentCreature][0] as Creature).matched = false;
+            }
             this.gameBoard.players[(this.gameBoard.currentPlayer+1)%2].hand.push(...this.gameBoard.players[(this.gameBoard.currentPlayer+1)%2].field[indexOfOpponentCreature])
             this.gameBoard.players[(this.gameBoard.currentPlayer+1)%2].field.splice(indexOfOpponentCreature,1)
         }
