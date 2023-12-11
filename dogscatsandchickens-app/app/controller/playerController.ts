@@ -269,6 +269,7 @@ export class PlayerController {
         console.log(cardId + " clicked from hand")
         if (this.messyDormIP && (cardId == 306 || cardId == 307)){
             this.messyDormIP = false;
+            this.player.moves -= 1;
             this.gameController.discardCardFromHand(this.teaCard)
         }
         else if (this.discardNeed()){
