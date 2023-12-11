@@ -129,12 +129,12 @@ export class PlayerController {
 
     /*Checks to see if the turn can be ended*/
     canEndTurn(){
-        return (this.player.field.length > 0 || this.player.turnNumber > 0) && this.player.hand.length <= 5 && !this.actionIP();
+        return (this.player.field.length > 0 || this.player.turnNumber > 0) && this.player.hand.length <= 5 && (!this.actionIP() || this.gameController.gameOver);
     }
 
     /*Checks to see if there are any actions in progress*/
     actionIP(){
-        return this.attackInProgress || this.upgradePlacementIP || this.placeMatchedCreatureIP || this.beachSpiritsIP || this.forestSpiritsIP || this.riverSpiritsIP || this.birdArmyIP || this.teaIP || this.myMatchedCatIP;
+        return this.attackInProgress || this.upgradePlacementIP || this.placeMatchedCreatureIP || this.beachSpiritsIP || this.forestSpiritsIP || this.riverSpiritsIP || this.birdArmyIP || this.teaIP || this.myMatchedCatIP || this.gameController.gameOver;
     }
 
     /*Checks to see if player can draw card*/

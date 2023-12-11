@@ -7,6 +7,7 @@ import {GameBoard} from "../models/gameboard"
 
 export class GameController {
     gameBoard: GameBoard;
+    gameOver: boolean = false;
 
     constructor(player1Name: string = "Player 1", player2Name: string = "Player 2"){
         this.gameBoard = new GameBoard(player1Name, player2Name);
@@ -52,6 +53,7 @@ export class GameController {
         else {
             console.log("Game is tied")
         }
+        this.gameOver = false;
         this.gameCleanUp();
         this.preGamePreparation();
     }
@@ -63,8 +65,11 @@ export class GameController {
     //Checks to see if the end of the turn is reached
     //if it is, then it goes to next player
     endofTurn(): void {
-        if (this.isGameOver()){
+        if (this.gameOver){
             this.endOfGame();
+        }
+        else if (this.isGameOver()){
+            this.gameOver=true;
         }
         else
         {

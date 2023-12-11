@@ -66,6 +66,7 @@ const aiPlayerController: AIPlayerController = new AIPlayerController(gameContro
 export function GameView() {
     const [move, setMove] = useState(0)
     const [showDiscard, setShowDiscard] = useState(false)
+    let alertSounded = false
 
     //gets image associated with id of card
     function getImageFromId(cardId: number){
@@ -333,6 +334,29 @@ export function GameView() {
         }
     }
 
+    function bottomButtonText(){
+        if (gameController.gameOver){
+            if (gameController.gameOver){
+                if (!alertSounded) {
+                    if (playerController.player.field.length==0){
+                        alert(playerController.player.name + " has lost :(")
+                    }  
+                    else if (aiPlayerController.player.field.length==0){
+                        alert(playerController.player.name + " has won :)")
+                    }
+                    else {
+                        alert("It's a tie ^-^")
+                    }
+                }
+                alertSounded = true;
+            }
+            return "New Game!"
+        }
+        else {
+            return "End Turn!"
+        }
+    }
+
     const opponentHandView = (<div style={{backgroundColor: '#e74c3c',padding:'10px', display: 'grid', gridTemplateColumns: 'repeat(' + gameController.gameBoard.players[1].hand.length+ ', 1fr)', gap: "10px"}}>{gameController.gameBoard.players[1].hand.map(card => <img style={{border: '2px solid', borderColor: opponentHandCardStyle(), height: "100%"}} onClick={() => onclickOpponentHandHandle(card.id)} src={setOpponentHandImage(card).src}/>)}</div>)
 
     const opponentFieldView = (
@@ -370,7 +394,7 @@ export function GameView() {
 
     const myHandView = (<div style={{backgroundColor: '#3498db', padding:'10px', display: 'grid', gridTemplateColumns: 'repeat(' + gameController.gameBoard.players[0].hand.length+ ', 1fr)', gap: "10px"}}>{gameController.gameBoard.players[0].hand.map(card => <img src={setMyHandImage(card).src} style={{border: '2px solid', borderColor: handCardStyle(card.id), height: "100%"}} onClick={() => onclickHandCard(card.id)}/>)}</div>)
 
-    const bottomButtonView = (<div style={{backgroundColor: "#8e44ad", display: "grid", justifyContent: "center", gridTemplateColumns: "1fr", gap: "20%", padding: "10px 325px 10px"}}><button style={{backgroundColor: "gray", textAlign: "center", padding: "10px", border: "solid 2px", opacity: endTurnStyle()}} onClick={() => onclickEndTurn()}>End Turn!</button></div>)
+    const bottomButtonView = (<div style={{backgroundColor: "#8e44ad", display: "grid", justifyContent: "center", gridTemplateColumns: "1fr", gap: "20%", padding: "10px 325px 10px"}}><button style={{backgroundColor: "gray", textAlign: "center", padding: "10px", border: "solid 2px", opacity: endTurnStyle()}} onClick={() => onclickEndTurn()}>{bottomButtonText()}</button></div>)
 
     let fullDiscardView;
     if (showDiscard){
