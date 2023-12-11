@@ -154,7 +154,12 @@ export function GameView() {
 
     //gets image for opponent hand
     function setOpponentHandImage(card: Card){
-        return getTypeFromId(card.id)
+        if (playerController.messyDormIP){
+            return getImageFromId(card.id)
+        }
+        else {
+            return getTypeFromId(card.id)
+        }
     }
 
     //gets image for player hand
@@ -210,7 +215,7 @@ export function GameView() {
 
     /*hand card styling function*/
     function handCardStyle(cardId: number){
-        if (playerController.upgradeCard == cardId){
+        if (playerController.upgradeCard == cardId || (playerController.messyDormIP && (cardId == 306 || cardId == 307))){
             return "green"
         }
         else if (playerController.canUseHandCard(cardId)){

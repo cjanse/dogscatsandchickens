@@ -34,7 +34,7 @@ export function BasicGameView() {
 
     /*hand card styling function*/
     function handCardStyle(cardId: number){
-        if (playerController.upgradeCard == cardId){
+        if (playerController.upgradeCard == cardId || (playerController.messyDormIP && (cardId == 306 || cardId == 307))){
             return {border: '2px solid', borderColor: "green"}
         }
         else if (playerController.canUseHandCard(cardId)){

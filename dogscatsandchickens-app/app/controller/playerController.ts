@@ -35,7 +35,9 @@ export class PlayerController {
     birdArmyCard: number = 0;
     teaIP: boolean = false
     teaCard: number = 0;
+    messyDormIP: boolean = false;
     recoveryTurn: boolean = false;
+
 
 
     /* This function can be called multiple times to do moves at random...
@@ -134,7 +136,7 @@ export class PlayerController {
 
     /*Checks to see if there are any actions in progress*/
     actionIP(){
-        return this.attackInProgress || this.upgradePlacementIP || this.placeMatchedCreatureIP || this.beachSpiritsIP || this.forestSpiritsIP || this.riverSpiritsIP || this.birdArmyIP || this.teaIP || this.myMatchedCatIP || this.gameController.gameOver;
+        return this.attackInProgress || this.upgradePlacementIP || this.placeMatchedCreatureIP || this.beachSpiritsIP || this.forestSpiritsIP || this.riverSpiritsIP || this.birdArmyIP || this.teaIP || this.myMatchedCatIP || this.gameController.gameOver || this.messyDormIP;
     }
 
     /*Checks to see if player can draw card*/
@@ -165,6 +167,9 @@ export class PlayerController {
                         return this.gameBoard.discard.length>0 && this.gameBoard.discard.some(function (value, index, array) {return (value instanceof Action)});
                     case 304:
                     case 305:
+                        return this.gameBoard.players[(this.gameBoard.currentPlayer+1)%2].hand.length > 0
+                    case 306:
+                    case 307:
                         return this.gameBoard.players[(this.gameBoard.currentPlayer+1)%2].hand.length > 0
                     case 308:
                     case 309:
@@ -262,7 +267,11 @@ export class PlayerController {
     /*Allows player to use card, assuming correct conditions*/
     useHandCard(cardId: number){
         console.log(cardId + " clicked from hand")
-        if (this.discardNeed()){
+        if (this.messyDormIP && (cardId == 306 || cardId == 307)){
+            this.messyDormIP = false;
+            this.gameController.discardCardFromHand(this.teaCard)
+        }
+        else if (this.discardNeed()){
             this.gameController.discardCardFromHand(cardId)
         }
         else if (this.canFinishMatch(cardId)){
@@ -300,6 +309,10 @@ export class PlayerController {
                     case 305:
                         this.birdArmyIP = true;
                         this.birdArmyCard = cardId;
+                        break;
+                    case 306:
+                    case 307:
+                        this.messyDormIP = true;
                         break;
                     case 308:
                     case 309:
