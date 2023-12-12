@@ -502,8 +502,8 @@ export class GameController {
             }
             let i;
             for (i = 0; i <this.gameBoard.players[(this.gameBoard.currentPlayer+1)%2].field[indexOfOpponentCreature].length; i++){
-                (this.gameBoard.players[(this.gameBoard.currentPlayer+1)%2].field[indexOfOpponentCreature][0] as Creature).facedUp = false;
-                (this.gameBoard.players[(this.gameBoard.currentPlayer+1)%2].field[indexOfOpponentCreature][0] as Creature).matched = false;
+                (this.gameBoard.players[(this.gameBoard.currentPlayer+1)%2].field[indexOfOpponentCreature][i] as Creature).facedUp = false;
+                (this.gameBoard.players[(this.gameBoard.currentPlayer+1)%2].field[indexOfOpponentCreature][i] as Creature).matched = false;
             }
             this.gameBoard.players[(this.gameBoard.currentPlayer+1)%2].hand.push(...this.gameBoard.players[(this.gameBoard.currentPlayer+1)%2].field[indexOfOpponentCreature])
             this.gameBoard.players[(this.gameBoard.currentPlayer+1)%2].field.splice(indexOfOpponentCreature,1)

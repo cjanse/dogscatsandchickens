@@ -271,7 +271,7 @@ export class PlayerController {
         if (this.messyDormIP && (cardId == 306 || cardId == 307)){
             this.messyDormIP = false;
             this.player.moves -= 1;
-            this.gameController.discardCardFromHand(this.teaCard)
+            this.gameController.discardCardFromHand(cardId)
         }
         else if (this.discardNeed()){
             this.gameController.discardCardFromHand(cardId)
