@@ -37,6 +37,7 @@ export class PlayerController {
     teaCard: number = 0;
     messyDormIP: boolean = false;
     recoveryTurn: boolean = false;
+    alertSounded: boolean = false;
 
 
 
@@ -136,7 +137,7 @@ export class PlayerController {
 
     /*Checks to see if there are any actions in progress*/
     actionIP(){
-        return this.attackInProgress || this.upgradePlacementIP || this.placeMatchedCreatureIP || this.beachSpiritsIP || this.forestSpiritsIP || this.riverSpiritsIP || this.birdArmyIP || this.teaIP || this.myMatchedCatIP || this.gameController.gameOver || this.messyDormIP;
+        return this.attackInProgress || this.upgradePlacementIP || this.placeMatchedCreatureIP || this.beachSpiritsIP || this.forestSpiritsIP || this.riverSpiritsIP || this.birdArmyIP || this.teaIP || this.myMatchedCatIP || this.gameController.gameOver || this.messyDormIP || this.alertSounded;
     }
 
     /*Checks to see if player can draw card*/

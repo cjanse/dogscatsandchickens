@@ -66,7 +66,7 @@ const aiPlayerController: AIPlayerController = new AIPlayerController(gameContro
 export function GameView() {
     const [move, setMove] = useState(0)
     const [showDiscard, setShowDiscard] = useState(false)
-    let alertSounded = false
+    const [showCard, setShowCard] = useState(false)
 
     //gets image associated with id of card
     function getImageFromId(cardId: number){
@@ -190,7 +190,13 @@ export function GameView() {
 
     //gets image for player field
     function setMyFieldImage(card: Card){
-        return getImageFromId(card.id);
+        if ((card instanceof Creature && (card as Creature).facedUp)||(card instanceof Upgrade && (card as Upgrade).facedUp) || showCard)
+        {
+            return getImageFromId(card.id)
+        }
+        else {
+            return getTypeFromId(card.id)
+        }
     }
 
     /*End turn styling function (controls opacity)*/
@@ -287,6 +293,9 @@ export function GameView() {
 
     /*onclickHandler for ending a turn*/
     function onclickEndTurn(){
+        if (playerController.alertSounded){
+            playerController.alertSounded = false;
+        }
         if(playerController.endTurn() && playerController.player.turnNumber > 0){
             aiPlayerController.move();
         }
@@ -341,25 +350,24 @@ export function GameView() {
 
     function bottomButtonText(){
         if (gameController.gameOver){
-            if (gameController.gameOver){
-                if (!alertSounded) {
-                    if (playerController.player.field.length==0){
-                        alert(playerController.player.name + " has lost :(")
-                    }  
-                    else if (aiPlayerController.player.field.length==0){
-                        alert(playerController.player.name + " has won :)")
-                    }
-                    else {
-                        alert("It's a tie ^-^")
-                    }
-                }
-                alertSounded = true;
-            }
             return "New Game!"
         }
         else {
             return "End Turn!"
         }
+    }
+
+    if (gameController.gameOver && !playerController.alertSounded){
+        if (playerController.player.field.length==0){
+            alert(playerController.player.name + " has lost :(")
+        }  
+        else if (aiPlayerController.player.field.length==0){
+            alert(playerController.player.name + " has won :)")
+        }
+        else {
+            alert("It's a tie ^-^")
+        }
+        playerController.alertSounded = true;
     }
 
     const opponentHandView = (<div style={{backgroundColor: '#e74c3c',padding:'10px', display: 'grid', gridTemplateColumns: 'repeat(' + gameController.gameBoard.players[1].hand.length+ ', 1fr)', gap: "10px", justifyItems:"center"}}>{gameController.gameBoard.players[1].hand.map(card => <img style={{border: '2px solid', borderColor: opponentHandCardStyle(), width: "100%", maxWidth: window.innerWidth/10}} onClick={() => onclickOpponentHandHandle(card.id)} src={setOpponentHandImage(card).src}/>)}</div>)
@@ -382,7 +390,7 @@ export function GameView() {
             {gameController.gameBoard.players[0].field.map(cards=>
                 <div style={{padding:'10px', display:'grid', gridTemplateColumns: '1fr'}}>
                     {cards.map(card=>
-                        <img style={{border: '2px solid', borderColor: fieldCardStyle(card.id), width: "100%", maxWidth: window.innerWidth/10}} onClick={() => onclickFieldHandle(card.id)} src={setMyFieldImage(card).src}/>)}
+                        <img style={{border: '2px solid', borderColor: fieldCardStyle(card.id), width: "100%", maxWidth: window.innerWidth/10}} onClick={() => onclickFieldHandle(card.id)} src={setMyFieldImage(card).src} onMouseEnter={() => setShowCard(true)} onMouseLeave={() => setShowCard(false)} />)}
                 </div>
             )}
         </div>
