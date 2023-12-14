@@ -344,11 +344,13 @@ export class GameController {
 
     /*Activates Matched Creature's ability*/
     matchCreatureActivateAbility(cardId: number): void {
-        const indexOfCreature = this.gameBoard.players[this.gameBoard.currentPlayer].field.indexOf(this.gameBoard.players[this.gameBoard.currentPlayer].field.filter(function (value, index, array) {return Math.floor(value[0].id) == Math.floor(cardId)})[0]);
-        (this.gameBoard.players[this.gameBoard.currentPlayer].field[indexOfCreature][0] as Creature).facedUp = true;
-        (this.gameBoard.players[this.gameBoard.currentPlayer].field[indexOfCreature][1] as Creature).facedUp = true;
-        if ((this.gameBoard.players[this.gameBoard.currentPlayer].field[indexOfCreature][0] as Creature).creatureType == "Chicken") {
-            this.revealAllOpponentCard()
+        if (!this.gameOver) {
+            const indexOfCreature = this.gameBoard.players[this.gameBoard.currentPlayer].field.indexOf(this.gameBoard.players[this.gameBoard.currentPlayer].field.filter(function (value, index, array) {return Math.floor(value[0].id) == Math.floor(cardId)})[0]);
+            (this.gameBoard.players[this.gameBoard.currentPlayer].field[indexOfCreature][0] as Creature).facedUp = true;
+            (this.gameBoard.players[this.gameBoard.currentPlayer].field[indexOfCreature][1] as Creature).facedUp = true;
+            if ((this.gameBoard.players[this.gameBoard.currentPlayer].field[indexOfCreature][0] as Creature).creatureType == "Chicken") {
+                this.revealAllOpponentCard()
+            }
         }
     }
 
