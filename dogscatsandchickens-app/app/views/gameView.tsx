@@ -67,6 +67,8 @@ export function GameView() {
     const [move, setMove] = useState(0)
     const [showDiscard, setShowDiscard] = useState(false)
     const [showCard, setShowCard] = useState(false)
+    const [hideSummary, setHideSummary] = useState(false)
+    const [partialSummary, setPartialSummary] = useState(false)
 
     //gets image associated with id of card
     function getImageFromId(cardId: number){
@@ -413,6 +415,33 @@ export function GameView() {
     if (showDiscard){
         fullDiscardView = (<div style={{backgroundColor: '#44db5e', padding: '10px', display: 'grid', gridTemplateColumns: 'repeat(9, 1fr)', gap: "10px"}}>{gameController.gameBoard.discard.map(card => <img style={{border: '2px solid', borderColor: fullDiscardCardStyle(card.id)}} onClick={() => onclickDiscardHandle(card.id)} src={setDiscardImage(card).src}/>).reverse()}</div>)
     }
+
+    let summaryView;
+    if (!hideSummary && !partialSummary)
+        summaryView = (<div style={{backgroundColor: "#95a5a6"}}>{gameController.gameBoard.summary.map(summary=>
+        <div>{summary}</div>)}
+        <div>
+        <button style={{backgroundColor: "gray", textAlign: "center", padding: "10px", border: "solid 2px"}} onClick={() => setHideSummary(true)}>Hide Summary</button>
+        <button style={{backgroundColor: "gray", textAlign: "center", padding: "10px", border: "solid 2px"}} onClick={() => setPartialSummary(true)}>Current Turn Summary</button>
+        </div>
+        </div>)
+    else if (hideSummary){
+        summaryView = (<div style={{backgroundColor: "#95a5a6"}}><button style={{backgroundColor: "gray", textAlign: "center", padding: "10px", border: "solid 2px"}} onClick={() => setHideSummary(false)}>Show Summary</button></div>)
+    }
+    else {
+        let modifiedSummary = gameController.gameBoard.summary.slice()
+        let lastTurnIndex = 0;
+        modifiedSummary.forEach(function (value, index, array) {if (value.includes("turn")) {console.log("turn");lastTurnIndex = index}})
+        modifiedSummary = modifiedSummary.slice(lastTurnIndex)
+        summaryView = (<div style={{backgroundColor: "#95a5a6"}}>{modifiedSummary.map(summary=>
+        <div>{summary}</div>)}
+        <div>
+        <button style={{backgroundColor: "gray", textAlign: "center", padding: "10px", border: "solid 2px"}} onClick={() => setHideSummary(true)}>Hide Summary</button>
+        <button style={{backgroundColor: "gray", textAlign: "center", padding: "10px", border: "solid 2px"}} onClick={() => setPartialSummary(false)}>Full Summary</button>
+        </div>
+        </div>)
+    }
+
     
     return (
         <div>
@@ -421,6 +450,7 @@ export function GameView() {
             {fullDiscardView}
             {myHandView}
             {bottomButtonView}
+            {summaryView}
         </div>
     )
 }
