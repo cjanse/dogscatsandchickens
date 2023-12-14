@@ -411,7 +411,13 @@ export class PlayerController {
                     this.attackingCard = 0;
                 }
                 else {
-                    this.myMatchedCatCard = this.attackingCard
+                    const thisAttackingCard = this.attackingCard
+                    if (this.gameBoard.players[0].field.some(function(value, index, array) {return Math.floor(value[0].id) == Math.floor(thisAttackingCard)})) {
+                        this.myMatchedCatCard = this.attackingCard
+                    }
+                    else {
+                        this.finishCatAttack();
+                    }
                 }
             }
         }
