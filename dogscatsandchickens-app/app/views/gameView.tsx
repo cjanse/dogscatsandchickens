@@ -37,6 +37,7 @@ import messyDorm1 from "../../assets/cards/messy_dorm_1.jpg"
 import messyDorm2 from "../../assets/cards/messy_dorm_2.jpg"
 import powerOfTea1 from "../../assets/cards/power_of_tea_1.jpg"
 import powerOfTea2 from "../../assets/cards/power_of_tea_2.jpg"
+import { GameBoard } from "../models/gameboard";
 
 //Possible color choices
 /*
@@ -412,7 +413,7 @@ export function GameView() {
     const bottomButtonView = (<div style={{backgroundColor: "#8e44ad", display: "grid", justifyContent: "center", gridTemplateColumns: "1fr", gap: "20%", padding: "10px 325px 10px"}}><button style={{backgroundColor: "gray", textAlign: "center", padding: "10px", border: "solid 2px", opacity: endTurnStyle()}} onClick={() => onclickEndTurn()}>{bottomButtonText()}</button></div>)
 
     let fullDiscardView;
-    if (showDiscard){
+    if (showDiscard && gameController.gameBoard.discard.length > 0){
         fullDiscardView = (<div style={{backgroundColor: '#44db5e', padding: '10px', display: 'grid', gridTemplateColumns: 'repeat(9, 1fr)', gap: "10px"}}>{gameController.gameBoard.discard.map(card => <img style={{border: '2px solid', borderColor: fullDiscardCardStyle(card.id)}} onClick={() => onclickDiscardHandle(card.id)} src={setDiscardImage(card).src}/>).reverse()}</div>)
     }
 
