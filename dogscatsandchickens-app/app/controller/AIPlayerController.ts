@@ -55,7 +55,7 @@ export class AIPlayerController {
                 }
                 if (this.player.field.length > 0){
                     if (this.gameBoard.deck.length > 0) {this.gameController.drawCard();}
-                    if (this.player.moves > 0) {
+                    if (this.player.moves > 0 && this.player.hand.length > 0) {
                         this.randomReinforce();
                     }
                 }
