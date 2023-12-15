@@ -373,7 +373,7 @@ export function GameView() {
         playerController.alertSounded = true;
     }
 
-    const opponentHandView = (<div style={{backgroundColor: '#e74c3c',padding:'10px', display: 'grid', gridTemplateColumns: 'repeat(' + gameController.gameBoard.players[1].hand.length+ ', 1fr)', gap: "10px", justifyItems:"center"}}>{gameController.gameBoard.players[1].hand.map(card => <img style={{border: '2px solid', borderColor: opponentHandCardStyle(), width: "100%", maxWidth: window.innerWidth/10}} onClick={() => onclickOpponentHandHandle(card.id)} src={setOpponentHandImage(card).src}/>)}</div>)
+    const opponentHandView = (<div style={{backgroundColor: '#e74c3c',padding:'10px', display: 'grid', gridTemplateColumns: 'repeat(' + gameController.gameBoard.players[1].hand.length+ ', 1fr)', gap: "10px", justifyItems:"center"}}>{gameController.gameBoard.players[1].hand.map(card => <img key={card.id} style={{border: '2px solid', borderColor: opponentHandCardStyle(), width: "100%", maxWidth: window.innerWidth/10}} onClick={() => onclickOpponentHandHandle(card.id)} src={setOpponentHandImage(card).src}/>)}</div>)
 
     const opponentFieldView = (
         <div style={{backgroundColor: '#ff6d5a',padding:'10px', display:'grid', gridTemplateColumns: 'repeat(' +gameController.gameBoard.players[1].field.length+', 1fr)', gap: "10px", justifyItems:"center"}}>
@@ -408,7 +408,7 @@ export function GameView() {
         {discardView}
   </div>)
 
-    const myHandView = (<div style={{backgroundColor: '#3498db', padding:'10px', display: 'grid', gridTemplateColumns: 'repeat(' + gameController.gameBoard.players[0].hand.length+ ', 1fr)', gap: "10px", justifyItems:"center"}}>{gameController.gameBoard.players[0].hand.map(card => <img src={setMyHandImage(card).src} style={{border: '2px solid', borderColor: handCardStyle(card.id), width: "100%", maxWidth: window.innerWidth/10}} onClick={() => onclickHandCard(card.id)}/>)}</div>)
+    const myHandView = (<div style={{backgroundColor: '#3498db', padding:'10px', display: 'grid', gridTemplateColumns: 'repeat(' + gameController.gameBoard.players[0].hand.length+ ', 1fr)', gap: "10px", justifyItems:"center"}}>{gameController.gameBoard.players[0].hand.map(card => <img key={card.id} src={setMyHandImage(card).src} style={{border: '2px solid', borderColor: handCardStyle(card.id), width: "100%", maxWidth: window.innerWidth/10}} onClick={() => onclickHandCard(card.id)}/>)}</div>)
 
     const bottomButtonView = (<div style={{backgroundColor: "#8e44ad", display: "grid", justifyContent: "center", gridTemplateColumns: "1fr", gap: "20%", padding: "10px 325px 10px"}}><button style={{backgroundColor: "gray", textAlign: "center", padding: "10px", border: "solid 2px", opacity: endTurnStyle()}} onClick={() => onclickEndTurn()}>{bottomButtonText()}</button></div>)
 
