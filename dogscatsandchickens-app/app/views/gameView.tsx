@@ -391,7 +391,7 @@ export function GameView() {
     const myFieldView = (
         <div style={{backgroundColor: '#5abaff',padding:'10px', display:'grid', gridTemplateColumns: 'repeat(' +gameController.gameBoard.players[0].field.length+', 1fr)', gap: "10px", justifyItems:"center"}}>
             {gameController.gameBoard.players[0].field.map(cards=>
-                <div key={cards[0].id}style={{padding:'10px', display:'grid', gridTemplateColumns: '1fr'}}>
+                <div key={cards[0].id} style={{padding:'10px', display:'grid', gridTemplateColumns: '1fr'}}>
                     {cards.map(card=>
                         <img key={card.id} style={{border: '2px solid', borderColor: fieldCardStyle(card.id), width: "100%", maxWidth: window.innerWidth/10}} onClick={() => onclickFieldHandle(card.id)} src={setMyFieldImage(card).src} onMouseEnter={() => setShowCard(true)} onMouseLeave={() => setShowCard(false)} />)}
                 </div>
@@ -443,14 +443,16 @@ export function GameView() {
         </div>)
     }
 
-    
-    return (
-        <div>
-            {opponentHandView}
+    /*
+    {opponentHandView}
             {fieldView}
             {fullDiscardView}
             {myHandView}
             {bottomButtonView}
+    */
+    
+    return (
+        <div>
             {summaryView}
         </div>
     )
