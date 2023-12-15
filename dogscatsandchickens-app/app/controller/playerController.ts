@@ -5,7 +5,6 @@ import {Card} from "../models/card";
 import {Player} from "../models/player";
 import {GameBoard} from "../models/gameboard"
 import {GameController} from "./gameController";
-import { The_Girl_Next_Door } from "next/font/google";
 
 export class PlayerController {
 
@@ -34,8 +33,12 @@ export class PlayerController {
     riverSpiritsIP: boolean = false;
     birdArmyIP: boolean = false;
     birdArmyCard: number = 0;
-    teaIP = false
+    teaIP: boolean = false
     teaCard: number = 0;
+    messyDormIP: boolean = false;
+    recoveryTurn: boolean = false;
+    alertSounded: boolean = false;
+
 
 
     /* This function can be called multiple times to do moves at random...
@@ -129,22 +132,26 @@ export class PlayerController {
 
     /*Checks to see if the turn can be ended*/
     canEndTurn(){
-        return (this.player.field.length > 0 || this.player.turnNumber > 0) && this.player.hand.length <= 5 && !this.actionIP();
+        return (this.player.field.length > 0 || this.player.turnNumber > 0) && this.player.hand.length <= 5 && (!this.actionIP() || this.gameController.gameOver);
     }
 
     /*Checks to see if there are any actions in progress*/
     actionIP(){
-        return this.attackInProgress || this.upgradePlacementIP || this.placeMatchedCreatureIP || this.beachSpiritsIP || this.forestSpiritsIP || this.riverSpiritsIP || this.birdArmyIP || this.teaIP || this.myMatchedCatIP;
+        return this.attackInProgress || this.upgradePlacementIP || this.placeMatchedCreatureIP || this.beachSpiritsIP || this.forestSpiritsIP || this.riverSpiritsIP || this.birdArmyIP || this.teaIP || this.myMatchedCatIP || this.gameController.gameOver || this.messyDormIP || this.alertSounded;
     }
 
     /*Checks to see if player can draw card*/
     canDraw(cardId: number){
-        return cardId == this.gameBoard.deck[this.gameBoard.deck.length-1].id && this.player.field.length > 0 && this.player.moves == 2 && this.player.turnNumber > 0 && !this.hasDrawn && !this.actionIP();
+        return cardId == this.gameBoard.deck[this.gameBoard.deck.length-1].id && this.player.field.length > 0 && (this.player.moves == 2 || this.recoveryTurn) && this.player.turnNumber > 0 && !this.hasDrawn && !this.actionIP();
     }
 
     /*Checks to see if the card in hand can be used*/
     canUseHandCard(cardId: number){
-        if (cardId > 100 && cardId < 200){
+        if (this.player.field.length == 0 && this.player.turnNumber > 0 && (this.player.moves == 2 || this.recoveryTurn)){
+            this.recoveryTurn = true;
+            return (cardId > 100 && cardId < 200) || (cardId == 302 && this.gameBoard.discard.some(function(value, index, array) {return (value instanceof Creature)})) || ((cardId == 304 || cardId == 305) && this.gameBoard.players[(this.gameBoard.currentPlayer+1)%2].hand.some(function(value, index, array) {return (value instanceof Creature)}))
+        }
+        else if (cardId > 100 && cardId < 200){
             return ((this.player.turnNumber == 0 && this.player.moves == 2) || (this.player.turnNumber > 0 && this.player.moves > 0 && (this.hasDrawn || this.gameBoard.deck.length == 0) && !this.actionIP())) || (this.placeMatchedCreatureIP && this.matchCreature == cardId);
         }
         else if (cardId > 200 && cardId < 300){
@@ -161,6 +168,9 @@ export class PlayerController {
                         return this.gameBoard.discard.length>0 && this.gameBoard.discard.some(function (value, index, array) {return (value instanceof Action)});
                     case 304:
                     case 305:
+                        return this.gameBoard.players[(this.gameBoard.currentPlayer+1)%2].hand.length > 0
+                    case 306:
+                    case 307:
                         return this.gameBoard.players[(this.gameBoard.currentPlayer+1)%2].hand.length > 0
                     case 308:
                     case 309:
@@ -245,6 +255,7 @@ export class PlayerController {
     drawCard(cardId: number) {
         console.log(cardId + " clicked from deck")
         if (this.canDraw(cardId)){
+            this.recoveryTurn = false;
             console.log(cardId + " drawn")
             this.gameController.drawCard();
             this.hasDrawn = true;
@@ -257,7 +268,12 @@ export class PlayerController {
     /*Allows player to use card, assuming correct conditions*/
     useHandCard(cardId: number){
         console.log(cardId + " clicked from hand")
-        if (this.discardNeed()){
+        if (this.messyDormIP && (cardId == 306 || cardId == 307)){
+            this.messyDormIP = false;
+            this.player.moves -= 1;
+            this.gameController.discardCardFromHand(cardId)
+        }
+        else if (this.discardNeed()){
             this.gameController.discardCardFromHand(cardId)
         }
         else if (this.canFinishMatch(cardId)){
@@ -295,6 +311,10 @@ export class PlayerController {
                     case 305:
                         this.birdArmyIP = true;
                         this.birdArmyCard = cardId;
+                        break;
+                    case 306:
+                    case 307:
+                        this.messyDormIP = true;
                         break;
                     case 308:
                     case 309:
@@ -391,7 +411,13 @@ export class PlayerController {
                     this.attackingCard = 0;
                 }
                 else {
-                    this.myMatchedCatCard = this.attackingCard
+                    const thisAttackingCard = this.attackingCard
+                    if (this.gameBoard.players[0].field.some(function(value, index, array) {return Math.floor(value[0].id) == Math.floor(thisAttackingCard)})) {
+                        this.myMatchedCatCard = this.attackingCard
+                    }
+                    else {
+                        this.finishCatAttack();
+                    }
                 }
             }
         }

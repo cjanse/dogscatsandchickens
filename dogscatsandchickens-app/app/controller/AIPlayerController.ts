@@ -20,6 +20,10 @@ export class AIPlayerController {
 
     /* This function is reponsible for all of the AI moves*/
     move(): void {
+        //Doesn't do anything if the game is already over
+        if (this.gameController.gameOver){
+            return;
+        }
         //player puts a creature down for first turn
         if (this.player.turnNumber == 0){
             this.player.moves = 0;

@@ -10,6 +10,7 @@ export class GameBoard {
     discard: Card[] = []
     players: Player[] = []
     currentPlayer: number = 0
+    summary: string[] = [];
 
     constructor(player1Name: string = "Player 1", player2Name: string = "Player 2"){
         //Making Player
