@@ -138,14 +138,14 @@ export function BasicGameView() {
         setTurn(action + 1)
     }
 
-    const opponentHandView =  (<div style={{padding:'10px', display: 'grid', gridTemplateColumns: 'repeat(' + gameController.gameBoard.players[1].hand.length+ ', 1fr)', gap: "10px"}}>{gameController.gameBoard.players[1].hand.map(card => <div style={opponentHandCardStyle()} onClick={() => onclickOpponentHandHandle(card.id)}>{card.toString()}</div>)}</div>)
+    const opponentHandView =  (<div style={{padding:'10px', display: 'grid', gridTemplateColumns: 'repeat(' + gameController.gameBoard.players[1].hand.length+ ', 1fr)', gap: "10px"}}>{gameController.gameBoard.players[1].hand.map(card => <div key={card.id} style={opponentHandCardStyle()} onClick={() => onclickOpponentHandHandle(card.id)}>{card.toString()}</div>)}</div>)
 
     const opponentFieldView = (
         <div style={{padding:'10px', display:'grid', gridTemplateColumns: 'repeat(' +gameController.gameBoard.players[1].field.length+', 1fr)', gap: "10px"}}>
             {gameController.gameBoard.players[1].field.map(cards=>
-                <div style={{padding:'10px', display:'grid', gridTemplateColumns: '1fr', gap: "10px"}}>
+                <div key={cards[0].id} style={{padding:'10px', display:'grid', gridTemplateColumns: '1fr', gap: "10px"}}>
                     {cards.map(card=>
-                        <div style={opponentFieldCardStyle(card.id)} onClick={() => onclickHandleOpponentField(card.id)}>
+                        <div key={card.id} style={opponentFieldCardStyle(card.id)} onClick={() => onclickHandleOpponentField(card.id)}>
                             {card.toString()}
                         </div>
                     ).reverse()}
@@ -157,9 +157,9 @@ export function BasicGameView() {
     const myFieldView = (
         <div style={{padding:'10px', display:'grid', gridTemplateColumns: 'repeat(' +gameController.gameBoard.players[0].field.length+', 1fr)', gap: "10px"}}>
             {gameController.gameBoard.players[0].field.map(cards=>
-                <div style={{padding:'10px', display:'grid', gridTemplateColumns: '1fr', gap: "10px"}}>
+                <div key={cards[0].id}style={{padding:'10px', display:'grid', gridTemplateColumns: '1fr', gap: "10px"}}>
                     {cards.map(card=>
-                        <div style={fieldCardStyle(card.id)} onClick={() => onclickFieldHandle(card.id)}>
+                        <div key={card.id} style={fieldCardStyle(card.id)} onClick={() => onclickFieldHandle(card.id)}>
                             {card.toString()}
                         </div>
                     )}
@@ -168,9 +168,9 @@ export function BasicGameView() {
         </div>
     )
     
-    const myHandView = (<div style={{padding:'10px', display: 'grid', gridTemplateColumns: 'repeat(' + gameController.gameBoard.players[0].hand.length+ ', 1fr)', gap: "10px"}}>{gameController.gameBoard.players[0].hand.map(card => <div style={handCardStyle(card.id)} onClick={() => onclickHandCard(card.id)}>{card.toString()}</div>)}</div>)
-    const deckView = (<div style={{padding: '10px', display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: "10px"}}>{gameController.gameBoard.deck.map(card => <div style={deckCardStyle(card.id)} onClick={() => onclickDrawCard(card.id)}>{card.toString()}</div>).reverse()}</div>)   
-    const discardView = (<div style={{padding: '10px', display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: "10px"}}>{gameController.gameBoard.discard.map(card => <div style={discardCardStyle(card.id)} onClick={() => onclickDiscardHandle(card.id)}>{card.toString()}</div>).reverse()}</div>)        
+    const myHandView = (<div style={{padding:'10px', display: 'grid', gridTemplateColumns: 'repeat(' + gameController.gameBoard.players[0].hand.length+ ', 1fr)', gap: "10px"}}>{gameController.gameBoard.players[0].hand.map(card => <div key={card.id} style={handCardStyle(card.id)} onClick={() => onclickHandCard(card.id)}>{card.toString()}</div>)}</div>)
+    const deckView = (<div style={{padding: '10px', display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: "10px"}}>{gameController.gameBoard.deck.map(card => <div key={card.id} style={deckCardStyle(card.id)} onClick={() => onclickDrawCard(card.id)}>{card.toString()}</div>).reverse()}</div>)   
+    const discardView = (<div style={{padding: '10px', display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: "10px"}}>{gameController.gameBoard.discard.map(card => <div key={card.id} style={discardCardStyle(card.id)} onClick={() => onclickDiscardHandle(card.id)}>{card.toString()}</div>).reverse()}</div>)        
     const bottomButtonView = (<div style={{display: "grid", justifyContent: "center", gridTemplateColumns: "1fr", gap: "20%", padding: "10px 325px 10px"}}><button style={{backgroundColor: "gray", textAlign: "center", padding: "10px", border: "solid 2px", opacity: endTurnStyle()}} onClick={() => onclickEndTurn()}>End Turn!</button></div>)
 
     return (
