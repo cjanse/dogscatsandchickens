@@ -138,7 +138,7 @@ export function GameView() {
             case 309:
                 return powerOfTea2;
             default:
-                return creature
+                return creature;
         }
     }
 
@@ -443,16 +443,14 @@ export function GameView() {
         </div>)
     }
 
-    /*
-    {opponentHandView}
+    
+    return (
+        <div>
+            {opponentHandView}
             {fieldView}
             {fullDiscardView}
             {myHandView}
             {bottomButtonView}
-    */
-    
-    return (
-        <div>
             {summaryView}
         </div>
     )
