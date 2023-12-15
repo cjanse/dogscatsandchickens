@@ -377,10 +377,10 @@ export function GameView() {
 
     const opponentFieldView = (
         <div style={{backgroundColor: '#ff6d5a',padding:'10px', display:'grid', gridTemplateColumns: 'repeat(' +gameController.gameBoard.players[1].field.length+', 1fr)', gap: "10px", justifyItems:"center"}}>
-            {gameController.gameBoard.players[1].field.map(cards=>
-                <div style={{padding:'10px', display:'grid', gridTemplateColumns: '1fr'}}>
+            {gameController.gameBoard.players[1].field.map(cards=> 
+                <div key={cards[0].id} style={{padding:'10px', display:'grid', gridTemplateColumns: '1fr'}}>
                     {cards.map(card=>
-                        <img style={{border: '2px solid', borderColor: opponentFieldCardStyle(card.id), width: "100%", maxWidth: window.innerWidth/10}} onClick={() => onclickHandleOpponentField(card.id)} src={setOpponentFieldImage(card).src}/>).reverse()}
+                        <img key={card.id} style={{border: '2px solid', borderColor: opponentFieldCardStyle(card.id), width: "100%", maxWidth: window.innerWidth/10}} onClick={() => onclickHandleOpponentField(card.id)} src={setOpponentFieldImage(card).src}/>).reverse()}
                 </div>
             )}
         </div>
@@ -391,9 +391,9 @@ export function GameView() {
     const myFieldView = (
         <div style={{backgroundColor: '#5abaff',padding:'10px', display:'grid', gridTemplateColumns: 'repeat(' +gameController.gameBoard.players[0].field.length+', 1fr)', gap: "10px", justifyItems:"center"}}>
             {gameController.gameBoard.players[0].field.map(cards=>
-                <div style={{padding:'10px', display:'grid', gridTemplateColumns: '1fr'}}>
+                <div key={cards[0].id}style={{padding:'10px', display:'grid', gridTemplateColumns: '1fr'}}>
                     {cards.map(card=>
-                        <img style={{border: '2px solid', borderColor: fieldCardStyle(card.id), width: "100%", maxWidth: window.innerWidth/10}} onClick={() => onclickFieldHandle(card.id)} src={setMyFieldImage(card).src} onMouseEnter={() => setShowCard(true)} onMouseLeave={() => setShowCard(false)} />)}
+                        <img key={card.id} style={{border: '2px solid', borderColor: fieldCardStyle(card.id), width: "100%", maxWidth: window.innerWidth/10}} onClick={() => onclickFieldHandle(card.id)} src={setMyFieldImage(card).src} onMouseEnter={() => setShowCard(true)} onMouseLeave={() => setShowCard(false)} />)}
                 </div>
             )}
         </div>
@@ -414,13 +414,13 @@ export function GameView() {
 
     let fullDiscardView;
     if (showDiscard && gameController.gameBoard.discard.length > 0){
-        fullDiscardView = (<div style={{backgroundColor: '#44db5e', padding: '10px', display: 'grid', gridTemplateColumns: 'repeat(9, 1fr)', gap: "10px"}}>{gameController.gameBoard.discard.map(card => <img style={{border: '2px solid', borderColor: fullDiscardCardStyle(card.id)}} onClick={() => onclickDiscardHandle(card.id)} src={setDiscardImage(card).src}/>).reverse()}</div>)
+        fullDiscardView = (<div style={{backgroundColor: '#44db5e', padding: '10px', display: 'grid', gridTemplateColumns: 'repeat(9, 1fr)', gap: "10px"}}>{gameController.gameBoard.discard.map(card => <img key={card.id} style={{border: '2px solid', borderColor: fullDiscardCardStyle(card.id)}} onClick={() => onclickDiscardHandle(card.id)} src={setDiscardImage(card).src}/>).reverse()}</div>)
     }
 
     let summaryView;
     if (!hideSummary && !partialSummary)
         summaryView = (<div style={{backgroundColor: "#95a5a6"}}>{gameController.gameBoard.summary.map(summary=>
-        <div>{summary}</div>)}
+        <div key={summary}>{summary}</div>)}
         <div>
         <button style={{backgroundColor: "gray", textAlign: "center", padding: "10px", border: "solid 2px"}} onClick={() => setHideSummary(true)}>Hide Summary</button>
         <button style={{backgroundColor: "gray", textAlign: "center", padding: "10px", border: "solid 2px"}} onClick={() => setPartialSummary(true)}>Current Turn Summary</button>
@@ -435,7 +435,7 @@ export function GameView() {
         modifiedSummary.forEach(function (value, index, array) {if (value.includes("turn")) {console.log("turn");lastTurnIndex = index}})
         modifiedSummary = modifiedSummary.slice(lastTurnIndex)
         summaryView = (<div style={{backgroundColor: "#95a5a6"}}>{modifiedSummary.map(summary=>
-        <div>{summary}</div>)}
+        <div key={summary}>{summary}</div>)}
         <div>
         <button style={{backgroundColor: "gray", textAlign: "center", padding: "10px", border: "solid 2px"}} onClick={() => setHideSummary(true)}>Hide Summary</button>
         <button style={{backgroundColor: "gray", textAlign: "center", padding: "10px", border: "solid 2px"}} onClick={() => setPartialSummary(false)}>Full Summary</button>
