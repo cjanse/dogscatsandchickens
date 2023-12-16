@@ -7,7 +7,7 @@ const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: 'Dogs, Cats, and Chickens',
-  description: 'Play the original card game \"Dogs, Cats, and Chicken!',
+  description: 'Play the original card game \"Dogs, Cats, and Chickens!\"',
   icons: {
     icon: '/favicon.ico',
   }
