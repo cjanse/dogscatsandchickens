@@ -1,6 +1,7 @@
 //import Image from 'next/image'
 'use client'
 import { useState, useEffect } from 'react'
+import { BrowserRouter as Router, Routes, Route} from 'react-router-dom';
 import {BasicGameView} from "./views/basicGameView"
 import {GameView} from "./views/gameView"
 
@@ -15,9 +16,11 @@ export default function Home() {
   }
 
   return (
-    <main>
-      <GameView />
-    </main>
+    <Router>
+      <Routes>
+        <Route path="/" element={<GameView />} />
+      </Routes>
+    </Router>
   )
 }
 
