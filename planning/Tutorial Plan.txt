@@ -1,0 +1,35 @@
+1. Introduction, Explain your hand
+	a.) Your hand: dog, cat, chicken, defense, bird army
+	b.) Opponent hand: dog, dog, cat, fake upgrade, chicken
+2. Explain your field
+3. Explain opponent hand
+4. Explain opponent field
+5. Explain deck
+6. Explain discard
+7. Explain objective, Explain first move, place chicken down
+8. Click end turn
+9. Explain that opponent put a creature down (dog), draw a card
+	- Draws a revive
+10. Explain the two turns (attack and reinforce), explain that we are going to do a reinforce turn, place down cat
+11. Explain what an upgrade is, explain defense, place defense on cat
+12. Click end turn
+13. Explain that opponent attacked your cat but it was protected by defense (opponent drew self-destruct), Draw a card
+	- Draws chicken (same as on field)
+14. Explain match ability, place chicken on the same chicken
+15. Activate match ability for chicken
+16. Put an upgrade on revive on the chicken, explain what a revive is
+17. Click end turn
+18. Opponent puts dog (match ability) and fake upgrade (opponent draws another fake upgrade)
+19. Draw Messy dorm
+20. Attack dog with chicken
+21. End turn
+22. Opponent places dog with self-destruct (opponent draws chicken)
+23. Draw chicken 
+23. Attack chicken with dog
+24. End turn
+24. Opponent places chicken and dog
+25. Draw fake upgrade
+26. Attack chicken with cat
+27. End Turn
+28. Opponent places chicken, opponent places  (draws counter attack)
+29. Draw Power of Tea 

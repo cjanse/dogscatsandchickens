@@ -41,7 +41,7 @@ Tutorial Requirements:
 		- When a creature is matched, it is treated like on creature
 
 - Upgrade Cards
-	+ Cactus Attack - Blocks opposing creatures and attacks that creature only if 
+	+ Counter Attack - Blocks opposing creatures and attacks that creature only if 
 	  the following attack would result in the defending creature's victory
 	+ Revive - Instead of placing your defeated creature in the discard pile, you
 	  can place it back in your hand and use it again later in the game
