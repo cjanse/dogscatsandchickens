@@ -1,9 +1,11 @@
 //import Image from 'next/image'
 'use client'
-import { useState, useEffect } from 'react'
-import { BrowserRouter as Router, Routes, Route} from 'react-router-dom';
+import React, { useState, useEffect } from 'react'
+import { BrowserRouter as Router, Routes, Route, Link} from 'react-router-dom';
 import {BasicGameView} from "./views/basicGameView"
 import {GameView} from "./views/gameView"
+import {HomePageView} from "./views/homePageView"
+import { TutorialView } from './views/tutorialView';
 
 export default function Home() {
   
@@ -17,10 +19,12 @@ export default function Home() {
 
   return (
     <Router>
-      <Routes>
-        <Route path="/" element={<GameView />} />
-      </Routes>
-    </Router>
+    <Routes>
+      <Route path="/" element={<HomePageView/> } />
+      <Route path="/play" element={<GameView/> } />
+      <Route path="/tutorial" element={<TutorialView/>}/>
+    </Routes>
+  </Router>
   )
 }
 
