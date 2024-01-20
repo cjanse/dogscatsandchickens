@@ -1,0 +1,65 @@
+Tutorial Requirements:
+
+- Explain the board
+	+ Opponent hand
+	+ Opponent field
+	+ Deck
+	+ Discard
+	+ Your Hand
+	+ Your Field
+
+- Explain overall objective 
+	+ Try to get rid of your opponent creatures while protecting your own
+	  using creature, upgrade, and action cards
+
+- Explain first turn
+	+ Put creature on board
+
+- Explaining general turns
+	+ Draw Card
+	+ Choose between Attack or Reinforce Turn
+		- Reinforce Turn
+			+ Can place down two cards of any type
+		- Attack Turn
+			+ Choose one card on your field to attack
+	+ Get rid of extra cards if there are more than 5 in hand
+	+ Click end turn
+		- Can generally end turn whenever you would like 
+
+- Explain recovering from a near loss
+
+- Creature Cards
+	+ Types: Dog, Cat, and Chicken
+	+ Interaction between types
+		- Dogs defeat cats
+		- Cats defeat chickens
+		- chickens defeat dogs
+	+ Matching Abilities
+		- Cat: Can attack multiple times
+		- Dog: Can defeat any creature type
+		- Chicken: Forces opponent to flip up all their cards
+		- When a creature is matched, it is treated like on creature
+
+- Upgrade Cards
+	+ Cactus Attack - Blocks opposing creatures and attacks that creature only if 
+	  the following attack would result in the defending creature's victory
+	+ Revive - Instead of placing your defeated creature in the discard pile, you
+	  can place it back in your hand and use it again later in the game
+	+ Defense - Blocks opposing creature's attack
+	+ Fake Upgrade - Does nothing but is returned to your hand when creature is defeated
+	+ Self-Destruct - When creature is defeated, opposing creature and all
+	  upgrades attacked to that creature are discarded as well
+	+ Creatures can have up to two upgrades
+	+ Upgrades are only activated if a creature is defeated
+
+- Action Cards
+	+  Spirits
+		- River Spirits - go into the discard pile and choose an action card
+		- Forest Spirits - go into the discard pile and choose one creature card
+		- Beach Spirits - go into the discard pile and choose one upgrade card
+	+ Power of Tea - Reveal one of your opponent's cards on the field
+	+ Messy Dorm - Examine your opponent's hand
+	+ Bird Army - Steal one card from your opponent at random. You can choose what 
+	  type of card you want to steal
+	+ Action cards are automatically discarded when used
+	
