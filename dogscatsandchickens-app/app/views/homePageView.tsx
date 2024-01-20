@@ -89,9 +89,9 @@ export function HomePageView() {
             <div style={{display:"grid", placeItems:"center"}}>
             <h1 style={{textAlign:"center", fontSize: "xx-large", fontFamily:"Fantasy, cursive"}}>Dogs, Cats, and Chickens!</h1>
             <div style={{padding:'10px', display:'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: "10px", width:"35%", justifyItems: "center"}}>
-                <img src={randomDogCard().src}/>
-                <img src={randomCatCard().src}/>
-                <img src={randomChickenCard().src}/>
+                <img style={{border: '2px solid'}} src={randomDogCard().src}/>
+                <img style={{border: '2px solid'}} src={randomCatCard().src}/>
+                <img style={{border: '2px solid'}} src={randomChickenCard().src}/>
             </div>
             <div style={{display:"grid", gap:"10px", gridTemplateColumns: 'repeat(1, 1fr)'}}>
             <button style={{backgroundColor: "gray", textAlign: "center", padding: "10px", border: "solid 2px"}}><Link to="/play">Play!</Link></button>
