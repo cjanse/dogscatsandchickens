@@ -47,6 +47,12 @@ tutorialController.preTutorialPreparation();
 
 
 export function TutorialView() {
+    console.log(tutorialController.step)
+    console.log(tutorialController.gameBoard.deck.toString())
+    console.log(tutorialController.gameBoard.players[0].hand.toString())
+    console.log(tutorialController.gameBoard.players[0].field.toString())
+    console.log(tutorialController.gameBoard.players[1].hand.toString())
+    console.log(tutorialController.gameBoard.players[1].field.toString())
     const [move, setMove] = useState(0)
     const [showDiscard, setShowDiscard] = useState(false)
     const [showCard, setShowCard] = useState(false)
@@ -194,72 +200,8 @@ export function TutorialView() {
         }*/
     }
 
-    /*deck card styling function*/
-    function deckCardStyle(cardId: number){
-        return "black";
-        /*if (playerController.canDraw(cardId)){
-            return "red"
-        }
-        else {
-            return "black"
-        }*/
-    }
-
-    /*hand card styling function*/
-    function handCardStyle(cardId: number){
-        return "black";
-        /*if (playerController.upgradeCard == cardId || (playerController.messyDormIP && (cardId == 306 || cardId == 307))){
-            return "green"
-        }
-        else if (playerController.canUseHandCard(cardId)){
-            return "red"
-        }
-        else if (playerController.discardNeed()){
-            return "blue"
-        }
-        else {
-            return "black"
-        }*/
-    }
-
-    /*field card styling function*/
-    function fieldCardStyle(cardId: number){
-        return "black";
-        /*if (cardId == playerController.attackingCard) {
-            return "green"
-        }
-        else if (playerController.canFieldHandle(cardId)){
-            return "red"
-        }
-        else if (playerController.canActivateAbility(cardId)){
-            return "yellow"
-        }
-        else {
-            return "black"
-        }*/
-    }
-
-    /*opponent field card styling function*/
-    function opponentFieldCardStyle(cardId: number){
-        return "black";
-        /*if (playerController.canHandleOpponentField(cardId)){
-            return "red"
-        }
-        else {
-            return "black"
-        }*/
-    }
-
-    /*opponent hand styling function*/
-    function opponentHandCardStyle(){
-        return "black";
-        /*
-        if (playerController.canHandleOpponentHand()) {
-            return "red"
-        }
-        else {
-            return "black"
-        }*/
+    function generalCardStyle(cardId: number){
+        return tutorialController.highlightCard(cardId);
     }
 
     /*discard card styling function*/
@@ -275,17 +217,41 @@ export function TutorialView() {
 
     /*top discard card styling function*/
     function topDiscardCardStyle(){
-        return "black";
-        /*if (playerController.gameController.gameBoard.discard.length > 0 && (playerController.beachSpiritsIP || playerController.riverSpiritsIP || playerController.forestSpiritsIP)) {
+        if (tutorialController.gameBoard.discard.length > 0 /*&& (playerController.beachSpiritsIP || playerController.riverSpiritsIP || playerController.forestSpiritsIP)*/) {
             return "red"
         }
         else {
             return "black"
-        }*/
+        }
+    }
+
+    function gamePartBorder(gamePart: String){
+        if (gamePart == "myHandView" && tutorialController.step == 0){
+            return 8;
+        }
+        else if (gamePart == "myFieldView" && tutorialController.step == 1){
+            return 8;
+        }
+        else if (gamePart == "opponentHandView" && tutorialController.step == 2){
+            return 8;
+        }
+        else if (gamePart == "opponentFieldView" && tutorialController.step == 3){
+            return 8;
+        }
+        else if (gamePart == "deckView" && tutorialController.step == 4){
+            return 8;
+        }
+        else if (gamePart == "discardView" && tutorialController.step == 5){
+            return 8;
+        }
+        return 0;
     }
 
     /*onclickHandler for ending a turn*/
     function onclickEndTurn(){
+        if (tutorialController.step < 6){
+            tutorialController.doActionWithEndTurnButton();
+        }
         /*if (playerController.alertSounded){
             playerController.alertSounded = false;
         }
@@ -297,37 +263,37 @@ export function TutorialView() {
 
     /*onclickHandler for drawing a card*/
     function onclickDrawCard(cardId: number){
-        //playerController.drawCard(cardId);
+        tutorialController.doActionWithCard(cardId);
         setMove(move + 1)
     }
 
     /*onclickHandler for interacting with a card in hand*/
     function onclickHandCard(cardId: number){
-        //playerController.useHandCard(cardId);
+        tutorialController.doActionWithCard(cardId);
         setMove(move + 1)
     }
 
     /*onclickHandler for attacking*/
     function onclickFieldHandle(cardId: number){
-        //playerController.fieldHandle(cardId);
+        tutorialController.doActionWithCard(cardId);
         setMove(move + 1)
     }
 
     /*onclickHandler for finishing an attacking turn*/
     function onclickHandleOpponentField(opponentCardId: number){
-        //playerController.handleOpponentField(opponentCardId);
+        tutorialController.doActionWithCard(opponentCardId);
         setMove(move + 1)
     }
 
     /*onclickHandler for opponent hand*/
     function onclickOpponentHandHandle(cardId: number){
-        //playerController.grabOpponentCard(cardId)
+        tutorialController.doActionWithCard(cardId);
         setMove(move + 1)
     }
 
     /*onclickHandler for discard pile*/
     function onclickDiscardHandle(cardId: number){
-        //playerController.grabDiscard(cardId)
+        tutorialController.doActionWithCard(cardId);
         setMove(move + 1)
     }
 
@@ -342,7 +308,12 @@ export function TutorialView() {
     }
 
     function bottomButtonText(){
-        return "End Turn!";
+        if (tutorialController.step < 6){
+            return "Okay";
+        }
+        else {
+            return "End Turn!";
+        }
         /*if (gameController.gameOver){
             return "New Game!"
         }
@@ -351,47 +322,34 @@ export function TutorialView() {
         }*/
     }
 
-    /*if (gameController.gameOver && !playerController.alertSounded){
-        if (playerController.player.field.length==0){
-            alert(playerController.player.name + " has lost :(")
-        }  
-        else if (aiPlayerController.player.field.length==0){
-            alert(playerController.player.name + " has won :)")
-        }
-        else {
-            alert("It's a tie ^-^")
-        }
-        playerController.alertSounded = true;
-    }*/
-
-    const opponentHandView = (<div style={{backgroundColor: '#e74c3c',padding:'10px', display: 'grid', gridTemplateColumns: 'repeat(' + tutorialController.gameBoard.players[1].hand.length+ ', 1fr)', gap: "10px", justifyItems:"center"}}>{tutorialController.gameBoard.players[1].hand.map(card => <img key={card.id} style={{border: '2px solid', borderColor: opponentHandCardStyle(), width: "100%", maxWidth: window.innerWidth/10}} onClick={() => onclickOpponentHandHandle(card.id)} src={setOpponentHandImage(card).src}/>)}</div>)
+    const opponentHandView = (<div style={{border: `${gamePartBorder("opponentHandView")}px dotted`, backgroundColor: '#e74c3c',padding:'10px', display: 'grid', gridTemplateColumns: 'repeat(' + tutorialController.gameBoard.players[1].hand.length+ ', 1fr)', gap: "10px", justifyItems:"center"}}>{tutorialController.gameBoard.players[1].hand.map(card => <img key={card.id} style={{border: '2px solid', borderColor: generalCardStyle(card.id), width: "100%", maxWidth: window.innerWidth/10}} onClick={() => onclickOpponentHandHandle(card.id)} src={setOpponentHandImage(card).src}/>)}</div>)
 
     const opponentFieldView = (
-        <div style={{backgroundColor: '#ff6d5a',padding:'10px', display:'grid', gridTemplateColumns: 'repeat(' +tutorialController.gameBoard.players[1].field.length+', 1fr)', gap: "10px", justifyItems:"center"}}>
+        <div style={{border: `${gamePartBorder("opponentFieldView")}px dotted`,backgroundColor: '#ff6d5a',padding:'10px', display:'grid', gridTemplateColumns: 'repeat(' +tutorialController.gameBoard.players[1].field.length+', 1fr)', gap: "10px", justifyItems:"center"}}>
             {tutorialController.gameBoard.players[1].field.map(cards=> 
                 <div key={cards[0].id} style={{padding:'10px', display:'grid', gridTemplateColumns: '1fr'}}>
                     {cards.map(card=>
-                        <img key={card.id} style={{border: '2px solid', borderColor: opponentFieldCardStyle(card.id), width: "100%", maxWidth: window.innerWidth/10}} onClick={() => onclickHandleOpponentField(card.id)} src={setOpponentFieldImage(card).src}/>).reverse()}
+                        <img key={card.id} style={{border: '2px solid', borderColor: generalCardStyle(card.id), width: "100%", maxWidth: window.innerWidth/10}} onClick={() => onclickHandleOpponentField(card.id)} src={setOpponentFieldImage(card).src}/>).reverse()}
                 </div>
             )}
         </div>
     )
     let deckView;
-    if (tutorialController.gameBoard.deck.length>0) {deckView = (<div style={{padding: '10px', backgroundColor: '#f39c12', display:'grid', justifyItems:"center", alignItems: "center"}}><img style={{border: '2px solid', borderColor: deckCardStyle(tutorialController.gameBoard.deck[tutorialController.gameBoard.deck.length-1].id), width: "100%", maxWidth: window.innerWidth/10}} onClick={() => onclickDrawCard(tutorialController.gameBoard.deck[tutorialController.gameBoard.deck.length-1].id)} src={setDeckImage(tutorialController.gameBoard.deck[tutorialController.gameBoard.deck.length-1]).src}/></div>)}
+    if (tutorialController.gameBoard.deck.length>0) {deckView = (<div style={{border: `${gamePartBorder("deckView")}px dotted`,padding: '10px', backgroundColor: '#f39c12', display:'grid', justifyItems:"center", alignItems: "center"}}><img style={{border: '2px solid', borderColor: generalCardStyle(tutorialController.gameBoard.deck[tutorialController.gameBoard.deck.length-1].id), width: "100%", maxWidth: window.innerWidth/10}} onClick={() => onclickDrawCard(tutorialController.gameBoard.deck[tutorialController.gameBoard.deck.length-1].id)} src={setDeckImage(tutorialController.gameBoard.deck[tutorialController.gameBoard.deck.length-1]).src}/></div>)}
     else {deckView = (<div style={{padding: '10px', backgroundColor: '#f39c12'}}></div>)}
     const myFieldView = (
-        <div style={{backgroundColor: '#5abaff',padding:'10px', display:'grid', gridTemplateColumns: 'repeat(' + tutorialController.gameBoard.players[0].field.length+', 1fr)', gap: "10px", justifyItems:"center"}}>
+        <div style={{border: `${gamePartBorder("myFieldView")}px dotted`,backgroundColor: '#5abaff',padding:'10px', display:'grid', gridTemplateColumns: 'repeat(' + tutorialController.gameBoard.players[0].field.length+', 1fr)', gap: "10px", justifyItems:"center"}}>
             {tutorialController.gameBoard.players[0].field.map(cards=>
                 <div key={cards[0].id} style={{padding:'10px', display:'grid', gridTemplateColumns: '1fr'}}>
                     {cards.map(card=>
-                        <img key={card.id} style={{border: '2px solid', borderColor: fieldCardStyle(card.id), width: "100%", maxWidth: window.innerWidth/10}} onClick={() => onclickFieldHandle(card.id)} src={setMyFieldImage(card).src} onMouseEnter={() => setShowCard(true)} onMouseLeave={() => setShowCard(false)} />)}
+                        <img key={card.id} style={{border: '2px solid', borderColor: generalCardStyle(card.id), width: "100%", maxWidth: window.innerWidth/10}} onClick={() => onclickFieldHandle(card.id)} src={setMyFieldImage(card).src} onMouseEnter={() => setShowCard(true)} onMouseLeave={() => setShowCard(false)} />)}
                 </div>
             )}
         </div>
     )
     let discardView
     if (tutorialController.gameBoard.discard.length > 0) {discardView = (<div style={{padding: '10px', backgroundColor: '#2ecc71', display:'grid', justifyItems:"center", alignItems: "center"}}><img style={{border: '2px solid', borderColor: topDiscardCardStyle(), width: "100%", maxWidth: window.innerWidth/10}} onClick={() => onclickTopDiscardHandle()} src={setDiscardImage(tutorialController.gameBoard.discard[tutorialController.gameBoard.discard.length-1]).src}/></div>)}
-    else {{discardView = (<div style={{padding: '10px', backgroundColor: '#2ecc71'}}></div>)}}
+    else {{discardView = (<div style={{border: `${gamePartBorder("discardView")}px dotted`,padding: '10px', backgroundColor: '#2ecc71'}}></div>)}}
     const fieldView = (<div style={{ display: 'grid', gridTemplateColumns: '3fr 1fr'}}>
         {opponentFieldView}
         {deckView}
@@ -399,7 +357,7 @@ export function TutorialView() {
         {discardView}
   </div>)
 
-    const myHandView = (<div style={{backgroundColor: '#3498db', padding:'10px', display: 'grid', gridTemplateColumns: 'repeat(' + tutorialController.gameBoard.players[0].hand.length+ ', 1fr)', gap: "10px", justifyItems:"center"}}>{tutorialController.gameBoard.players[0].hand.map(card => <img key={card.id} src={setMyHandImage(card).src} style={{border: '2px solid', borderColor: handCardStyle(card.id), width: "100%", maxWidth: window.innerWidth/10}} onClick={() => onclickHandCard(card.id)}/>)}</div>)
+    const myHandView = (<div style={{border: `${gamePartBorder("myHandView")}px dotted`,backgroundColor: '#3498db', padding:'10px', display: 'grid', gridTemplateColumns: 'repeat(' + tutorialController.gameBoard.players[0].hand.length+ ', 1fr)', gap: "10px", justifyItems:"center"}}>{tutorialController.gameBoard.players[0].hand.map(card => <img key={card.id} src={setMyHandImage(card).src} style={{border: '2px solid', borderColor: generalCardStyle(card.id), width: "100%", maxWidth: window.innerWidth/10}} onClick={() => onclickHandCard(card.id)}/>)}</div>)
 
     const bottomButtonView = (<div style={{backgroundColor: "#8e44ad", display: "grid", justifyContent: "center", gridTemplateColumns: "1fr", gap: "20%", padding: "10px 325px 10px"}}><button style={{backgroundColor: "gray", textAlign: "center", padding: "10px", border: "solid 2px", opacity: endTurnStyle()}} onClick={() => onclickEndTurn()}>{bottomButtonText()}</button></div>)
 
@@ -407,10 +365,9 @@ export function TutorialView() {
     if (showDiscard && tutorialController.gameBoard.discard.length > 0){
         fullDiscardView = (<div style={{backgroundColor: '#44db5e', padding: '10px', display: 'grid', gridTemplateColumns: 'repeat(9, 1fr)', gap: "10px"}}>{tutorialController.gameBoard.discard.map(card => <img key={card.id} style={{border: '2px solid', borderColor: fullDiscardCardStyle(card.id)}} onClick={() => onclickDiscardHandle(card.id)} src={setDiscardImage(card).src}/>).reverse()}</div>)
     }
-
-    console.log(window.innerWidth)
-    let bellaView = (<div style={{backgroundImage: `url(https://github.com/cjanse/dogscatsandchickens/blob/tutorial/dogscatsandchickens-app/assets/fancy_bella_talking.jpg?raw=true)`, backgroundSize: `contain`, backgroundRepeat: "no-repeat",margin: 0, overflow:'hidden'}}>
-        <p style={{paddingLeft: "16.5%", paddingTop: "1%", paddingRight: "1.5%", width:window.innerWidth/2, height:window.innerWidth/2.5/2 /*`${window.innerWidth*2}`*/}}>Hi, I am Bella. I am the fluffiest, cutest, and most amazing dog ever!!! I have a lot to say about the cuteness that I can unleash on the world. I am working on this game to entertain you</p>
+    
+    let bellaView = (<div style={{backgroundImage: `url(https://github.com/cjanse/dogscatsandchickens/blob/tutorial/dogscatsandchickens-app/assets/fancy_bella_talking.jpg?raw=true)`, backgroundSize: `contain`, backgroundRepeat: "no-repeat", backgroundPosition: "center",margin: 0, overflow:'hidden'}}>
+        <p style={{paddingLeft: "25%", paddingTop: "1%", paddingRight: "1.5%", width:window.innerWidth/1.15, height:window.innerWidth/2.5/2}}>{tutorialController.bellaQuotes[tutorialController.step]}</p>
     </div>)
     /*let bellaView = (<div style={{display: "grid", justifyContent: "center", alignItems: "center"}}>
     <button style={{backgroundColor: "gray", textAlign: "center", padding: "10px", border: "solid 2px"}}><Link to="/">Go Back!</Link></button>
