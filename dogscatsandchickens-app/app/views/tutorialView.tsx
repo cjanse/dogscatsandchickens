@@ -408,39 +408,21 @@ export function TutorialView() {
         fullDiscardView = (<div style={{backgroundColor: '#44db5e', padding: '10px', display: 'grid', gridTemplateColumns: 'repeat(9, 1fr)', gap: "10px"}}>{tutorialController.gameBoard.discard.map(card => <img key={card.id} style={{border: '2px solid', borderColor: fullDiscardCardStyle(card.id)}} onClick={() => onclickDiscardHandle(card.id)} src={setDiscardImage(card).src}/>).reverse()}</div>)
     }
 
-    console.log(bellaTalking)
-    let bellaView = (<div style={{backgroundImage: "url(${bellaTalking})", backgroundSize: "cover"}}>
-        <p>hi</p>
-        <p>hi</p>
-        <p>hi</p>
-        <p>hi</p>
-        <p>hi</p>
-        <p>hi</p>
-        <p>hi</p>
-        <p>hi</p>
-        <p>hi</p>
-        <p>hi</p>
-        <p>hi</p>
-        <p>hi</p>
-        <p>hi</p>
-        <p>hi</p>
-        <p>hi</p>
-        <p>hi</p>
-        <p>hi</p>
-        <p>hi</p>
-        <p>hi</p>
+    console.log(window.innerWidth)
+    let bellaView = (<div style={{backgroundImage: `url(https://github.com/cjanse/dogscatsandchickens/blob/tutorial/dogscatsandchickens-app/assets/fancy_bella_talking.jpg?raw=true)`, backgroundSize: `contain`, backgroundRepeat: "no-repeat",margin: 0, overflow:'hidden'}}>
+        <p style={{paddingLeft: "16.5%", paddingTop: "1%", paddingRight: "2%", width:window.innerWidth/2, height:window.innerWidth/2.5/2 /*`${window.innerWidth*2}`*/}}>Hi, I am Bella. I am the fluffiest, cutest, and most amazing dog ever!!! I have a lot to say about the cuteness that I can unleash on the world. I am working on this game to entertain you</p>
     </div>)
     /*let bellaView = (<div style={{display: "grid", justifyContent: "center", alignItems: "center"}}>
     <button style={{backgroundColor: "gray", textAlign: "center", padding: "10px", border: "solid 2px"}}><Link to="/">Go Back!</Link></button>
     </div>)*/
     return (
         <div>
+            {bellaView}
             {opponentHandView}
             {fieldView}
             {fullDiscardView}
             {myHandView}
             {bottomButtonView}
-            {bellaView}
         </div>
     )
 }
