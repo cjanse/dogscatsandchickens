@@ -1,6 +1,6 @@
 1. Introduction, Explain your hand
 	a.) Your hand: dog, cat, chicken, defense, bird army
-	b.) Opponent hand: dog, dog, cat, fake upgrade, chicken
+	b.) Opponent hand: dog, dog (same), cat, fake upgrade, chicken
 2. Explain your field
 3. Explain opponent hand
 4. Explain opponent field
@@ -19,17 +19,49 @@
 15. Activate match ability for chicken
 16. Put an upgrade on revive on the chicken, explain what a revive is
 17. Click end turn
-18. Opponent puts dog (match ability) and fake upgrade (opponent draws another fake upgrade)
+18. Opponent puts dog (match ability) and fake upgrade (opponent draws counter attack)
 19. Draw Messy dorm
 20. Attack dog with chicken
 21. End turn
-22. Opponent places dog with self-destruct (opponent draws chicken)
+22. Opponent places dog with self-destruct (opponent draws dog)
 23. Draw chicken 
 23. Attack chicken with dog
 24. End turn
-24. Opponent places chicken and dog
+24. Opponent places chicken and cat (draws dog)
 25. Draw fake upgrade
 26. Attack chicken with cat
 27. End Turn
-28. Opponent places chicken, opponent places  (draws counter attack)
-29. Draw Power of Tea 
+28. Opponent places chicken and counter attack upgrade (draws chicken)
+29. Draw cat (same on field)
+30. Attack chicken on field
+31. Get rid of extra card (fake upgrade)
+32. end turn
+33. Opponent places fake upgrade and counter attack on chicken (draws counter attack)
+34. Draws Power of tea
+35. Places cat on the same cat on field and places dog
+36. End Turn
+37. Opponent uses chicken to attack dog (Opponent draws cat that is different then on field)
+38. Draws Forest spirits
+39. Cat attacks chicken (x2) and attacks other cat
+40. End turn
+41. Opponent places cat and defense on that cat (Opponent draws defense)
+42. Draw chicken
+43. Use Messy dorm and use bird army to steal dog from opponent
+44. End turn
+45. Opponent places two fake upgrades on cat that is facing up (opponent draws fake upgrade)
+46. Draw card (cat)
+47. Use power of tea to see the other cat, use forest spirits to get the other half of the chicken
+48. End turn
+49. Opponent uses beach spirits to get self destruct and places self destruct on cat (Opponent draws beach spirits)
+50. Draw cat
+51. Place dog and cat
+52. End turn
+53. Opponent attacks cat using cat (Opponent draws messy dorm)
+54. Draw river spirits
+55. Use dog to attack cat that doesn't have self-destruct
+56. end turn
+57. Opponent steals river spirits using action card and uses river spirits to get power of tea (Opponent draws bird army)
+58. Draw dog
+59. Use dog to attack cat with self-destruct
+60. End turn
+61. Opponent can't do anything therefore player wins!
