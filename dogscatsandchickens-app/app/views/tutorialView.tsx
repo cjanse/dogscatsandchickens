@@ -345,7 +345,7 @@ export function TutorialView() {
         fullDiscardView = (<div style={{backgroundColor: '#44db5e', padding: '10px', display: 'grid', gridTemplateColumns: 'repeat(9, 1fr)', gap: "10px"}}>{tutorialController.gameBoard.discard.map(card => <img key={card.id} style={{border: '2px solid', borderColor: fullDiscardCardStyle(card.id)}} onClick={() => onclickDiscardHandle(card.id)} src={setDiscardImage(card).src}/>).reverse()}</div>)
     }
     
-    const bellaView = (<div style={{backgroundImage: `url(https://github.com/cjanse/dogscatsandchickens/blob/tutorial/dogscatsandchickens-app/assets/fancy_bella_talking.jpg?raw=true)`, backgroundSize: `contain`, backgroundRepeat: "no-repeat", backgroundPosition: "center",margin: 0, overflow:'hidden'}}>
+    const bellaView = (<div style={{backgroundImage: `url(https://github.com/cjanse/dogscatsandchickens/blob/Main/dogscatsandchickens-app/assets/fancy_bella_talking.jpg?raw=true)`, backgroundSize: `contain`, backgroundRepeat: "no-repeat", backgroundPosition: "center",margin: 0, overflow:'hidden'}}>
         <p style={{paddingLeft: "25%", paddingTop: "1%", paddingRight: "1.5%", width:window.innerWidth/1.15, height:window.innerWidth/2.5/2}}>{tutorialController.bellaQuotes[tutorialController.step]}</p>
     </div>)
     /*let bellaView = (<div style={{display: "grid", justifyContent: "center", alignItems: "center"}}>
