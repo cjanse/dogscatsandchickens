@@ -217,7 +217,7 @@ export function TutorialView() {
 
     /*top discard card styling function*/
     function topDiscardCardStyle(){
-        if (tutorialController.gameBoard.discard.length > 0 /*&& (playerController.beachSpiritsIP || playerController.riverSpiritsIP || playerController.forestSpiritsIP)*/) {
+        if (false /*&& (playerController.beachSpiritsIP || playerController.riverSpiritsIP || playerController.forestSpiritsIP)*/) {
             return "red"
         }
         else {
@@ -249,9 +249,7 @@ export function TutorialView() {
 
     /*onclickHandler for ending a turn*/
     function onclickEndTurn(){
-        if (tutorialController.step < 6){
-            tutorialController.doActionWithEndTurnButton();
-        }
+        tutorialController.doActionWithEndTurnButton();
         /*if (playerController.alertSounded){
             playerController.alertSounded = false;
         }
