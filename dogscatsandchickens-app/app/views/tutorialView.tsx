@@ -47,12 +47,6 @@ tutorialController.preTutorialPreparation();
 
 
 export function TutorialView() {
-    console.log(tutorialController.step)
-    console.log(tutorialController.gameBoard.deck.toString())
-    console.log(tutorialController.gameBoard.players[0].hand.toString())
-    console.log(tutorialController.gameBoard.players[0].field.toString())
-    console.log(tutorialController.gameBoard.players[1].hand.toString())
-    console.log(tutorialController.gameBoard.players[1].field.toString())
     const [move, setMove] = useState(0)
     const [showDiscard, setShowDiscard] = useState(false)
     const [showCard, setShowCard] = useState(false)
@@ -143,13 +137,12 @@ export function TutorialView() {
 
     //gets image for opponent hand
     function setOpponentHandImage(card: Card){
-        return getImageFromId(card.id);
-        /*if (playerController.messyDormIP){
+        if (tutorialController.step == 51){
             return getImageFromId(card.id)
         }
         else {
             return getTypeFromId(card.id)
-        }*/
+        }
     }
 
     //gets image for player hand
@@ -192,12 +185,6 @@ export function TutorialView() {
     /*End turn styling function (controls opacity)*/
     function endTurnStyle(){
         return "1"
-        /*if (playerController.canEndTurn()){
-            return "1"
-        }
-        else {
-            return "0.33";
-        }*/
     }
 
     function generalCardStyle(cardId: number){
@@ -206,18 +193,12 @@ export function TutorialView() {
 
     /*discard card styling function*/
     function fullDiscardCardStyle(cardId: number){
-        return "black";
-        /*if (playerController.canGrabDiscard(cardId)) {
-            return "red"
-        }
-        else {
-            return "black"
-        }*/
+        return tutorialController.highlightCard(cardId);
     }
 
     /*top discard card styling function*/
     function topDiscardCardStyle(){
-        if (false /*&& (playerController.beachSpiritsIP || playerController.riverSpiritsIP || playerController.forestSpiritsIP)*/) {
+        if (tutorialController.step == 59) {
             return "red"
         }
         else {
@@ -250,12 +231,6 @@ export function TutorialView() {
     /*onclickHandler for ending a turn*/
     function onclickEndTurn(){
         tutorialController.doActionWithEndTurnButton();
-        /*if (playerController.alertSounded){
-            playerController.alertSounded = false;
-        }
-        if(playerController.endTurn() && playerController.player.turnNumber > 0){
-            aiPlayerController.move();
-        }*/
         setMove(move + 1)
     }
 
@@ -357,14 +332,20 @@ export function TutorialView() {
 
     const myHandView = (<div style={{border: `${gamePartBorder("myHandView")}px dotted`,backgroundColor: '#3498db', padding:'10px', display: 'grid', gridTemplateColumns: 'repeat(' + tutorialController.gameBoard.players[0].hand.length+ ', 1fr)', gap: "10px", justifyItems:"center"}}>{tutorialController.gameBoard.players[0].hand.map(card => <img key={card.id} src={setMyHandImage(card).src} style={{border: '2px solid', borderColor: generalCardStyle(card.id), width: "100%", maxWidth: window.innerWidth/10}} onClick={() => onclickHandCard(card.id)}/>)}</div>)
 
-    const bottomButtonView = (<div style={{backgroundColor: "#8e44ad", display: "grid", justifyContent: "center", gridTemplateColumns: "1fr", gap: "20%", padding: "10px 325px 10px"}}><button style={{backgroundColor: "gray", textAlign: "center", padding: "10px", border: "solid 2px", opacity: endTurnStyle()}} onClick={() => onclickEndTurn()}>{bottomButtonText()}</button></div>)
+    let bottomButtonView;
+    if (tutorialController.step < 69){
+        bottomButtonView = (<div style={{backgroundColor: "#8e44ad", display: "grid", justifyContent: "center", gridTemplateColumns: "1fr", gap: "20%", padding: "10px 325px 10px"}}><button style={{backgroundColor: "gray", textAlign: "center", padding: "10px", border: "solid 2px", opacity: endTurnStyle()}} onClick={() => onclickEndTurn()}>{bottomButtonText()}</button></div>) 
+    }
+    else {
+        bottomButtonView = (<div style={{backgroundColor: "#8e44ad", display: "grid", justifyContent: "center", gridTemplateColumns: "1fr", gap: "20%", padding: "10px 325px 10px"}}><button style={{backgroundColor: "gray", textAlign: "center", padding: "10px", border: "solid 2px", opacity: endTurnStyle()}}><Link to="/">Return to home</Link></button></div>)
+    } 
 
     let fullDiscardView;
     if (showDiscard && tutorialController.gameBoard.discard.length > 0){
         fullDiscardView = (<div style={{backgroundColor: '#44db5e', padding: '10px', display: 'grid', gridTemplateColumns: 'repeat(9, 1fr)', gap: "10px"}}>{tutorialController.gameBoard.discard.map(card => <img key={card.id} style={{border: '2px solid', borderColor: fullDiscardCardStyle(card.id)}} onClick={() => onclickDiscardHandle(card.id)} src={setDiscardImage(card).src}/>).reverse()}</div>)
     }
     
-    let bellaView = (<div style={{backgroundImage: `url(https://github.com/cjanse/dogscatsandchickens/blob/tutorial/dogscatsandchickens-app/assets/fancy_bella_talking.jpg?raw=true)`, backgroundSize: `contain`, backgroundRepeat: "no-repeat", backgroundPosition: "center",margin: 0, overflow:'hidden'}}>
+    const bellaView = (<div style={{backgroundImage: `url(https://github.com/cjanse/dogscatsandchickens/blob/tutorial/dogscatsandchickens-app/assets/fancy_bella_talking.jpg?raw=true)`, backgroundSize: `contain`, backgroundRepeat: "no-repeat", backgroundPosition: "center",margin: 0, overflow:'hidden'}}>
         <p style={{paddingLeft: "25%", paddingTop: "1%", paddingRight: "1.5%", width:window.innerWidth/1.15, height:window.innerWidth/2.5/2}}>{tutorialController.bellaQuotes[tutorialController.step]}</p>
     </div>)
     /*let bellaView = (<div style={{display: "grid", justifyContent: "center", alignItems: "center"}}>
