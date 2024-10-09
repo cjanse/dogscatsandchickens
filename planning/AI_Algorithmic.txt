@@ -1,0 +1,34 @@
+AI Algorithm
+
+General strategies to win:
++ Optimize attacks to maximize chances of winning & minimizing risks of attacking creature
++ Reveal as much as you can about their opponent (their hand & field)
++ Keep your cards hidden (aka reducing risk)
++ Reduce field creature risk
++ Sabotage opponent (take valuable cards to disrupt their strategies [e.g. taking away the other half of a matching creature card])
+
+Attacking:
++ Analyze ALL attack combinations
+ - Determine probability that the attacking creature will win against attacked creature
+ - Determine probability that the attacking creature will lose
+ - Estimate how valuable attacking creature is
+ - Estimate how valuable attacked creature
+ - Use these metrics to generate an attack likelihood score for this combination
++ Determine if any attack likelihood scores are high enough to merit an attack
+ - If yes, determine the combination with the highest likelihood score and perform attack
+
+Reinforce turn:
++ Analyze personal field cards 
+ - Determine risk of card based on:
+  ~ the assessment of creatures on opponent field (i.e. how likely can the opponent get rid of your creature?)
+  ~ how well protected the card is (is it revealed? What upgrades are on the card? Are they also revealed?)
+ - Determine value of card based on:
+  ~ Is it needed to make a double creature? Is it even possible to make it a double creature?
+  ~ Is it the only card of a certain type?
++ Assess hand
+ - Analyze each card and determine a usefulness score
+  ~ Analysis will need to be unique for each card since each card has pretty different capabilities
+  ~ Analysis should focus on how to strengthen cards on field, through increasing attack combinations likelihoods (action cards will need more help in predicting how it will impact the attack likelihoods)
+  ~ Special attention should be given to valuable field cards that are at high risk and how hand cards can reduce this risk
++ Play the card that has the highest usefulness score
++ Repeat again for placing second card
