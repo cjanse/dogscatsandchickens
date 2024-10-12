@@ -32,3 +32,27 @@ Reinforce turn:
   ~ Special attention should be given to valuable field cards that are at high risk and how hand cards can reduce this risk
 + Play the card that has the highest usefulness score
 + Repeat again for placing second card
+
+
+Analyzing Creature Cards in Hand:
++ General Factors to consider:
+ - Amount of creatures on opponent field (0.1)
+  ~ min(amount of opponent field creatures * 0.2,1)
+ - Known opponent creature cards vs. creatures already on the field (0.5) NEEDS REVISION
+  ~ if hand creature can defeat opposing creature & can't be defeated by any opposing creature & field creature can be defeated by opposing creature that hand creature can defeat & there is no field creature of the same type as hand creature: 1
+  ~ else if creature can defeat opposing creature & can't be defeated by any opposing creature & there is no field creature of the same type as hand creature: 0.8
+  ~ else if creature can defeat opposing creature & there is no field creature of the same type as hand creature & field creature can be defeated by opposing creature that hand creature can defeat: 0.5
+  ~ else if creature can defeat opposing creature & field creature can be defeated by opposing creature that hand creature can defeat & can't be defeated by any opposing creature: 0.3
+  ~ else if creature can defeat opposing creature & field creature can be defeated by opposing creature that hand creature can defeat: 0.15
+  ~ All other cases: 0
+ - probability of specific creature types vs. creatures already on the field (0.2)
+  ~ Count known creature cards of each type in opponent hand, your hand, your field, and discord h
+   + if all counts are 0: 0
+  ~ if exposed type on board & no same creature type: min((1 - count of type that creature) / (1 - count of all types) x 1.5,1) 
+  ~ if exposed type on board: min((1 - count of type that creature) / (1 - count of all types) x 1.25,1)
+  ~ if no same creature type: min((1 - count of type that creature) / (1 - count of all types) x 1.15,1)
+  ~ All other cases: (1 - count of type that creature) / (1 - count of all types)
+ - Ability to make a double creature (now or in the future) (0.2)
+  ~ if matching card is on field or in hand: 1
+  ~ if matching card is not in player field or discard pile: 0.25
+  ~ All other cases: 0

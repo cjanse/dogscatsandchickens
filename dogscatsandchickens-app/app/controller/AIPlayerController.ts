@@ -39,6 +39,7 @@ export class AIPlayerController {
     //CURRENT BEHAVES EXACTLY LIKE BASIC
     algorithmicMove(): void {
         let analysis = this.algorithmicAnalyze();
+        console.log(analysis);
 
         //player puts a creature down for first turn
         if (this.player.turnNumber == 0) {
@@ -99,8 +100,29 @@ export class AIPlayerController {
 
     /* This function analyzes all cards for algorithm AI Players */
     algorithmicAnalyze(): { field: number[], hand: number[] } {
-        //FUNCTION STUB
-        return { field: [], hand: [] }
+        //Go through field
+        let field: number[] = [];
+        this.player.field.forEach((card) => {
+            field.push(0.4)
+        })
+
+        //Go through hand
+        let hand: number[] = [];
+        this.player.hand.forEach((card) => {
+            if (card.id < 200) {
+                hand.push(this.creatureCardAnalyze())
+            }
+            else {
+                hand.push(0.4);
+            }
+        })
+
+        return { field: field, hand: hand }
+    }
+
+    /*This function analyzes all hand creature card for algorithm AI Player */
+    creatureCardAnalyze(): number {
+        return 0.5;
     }
 
     /* This function is reponsible for all of the basic AI moves*/
