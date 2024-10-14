@@ -38,13 +38,13 @@ export class AIPlayerController {
     /* This function is responsiable for all of the algorithmic AI moves*/
     //CURRENT BEHAVES EXACTLY LIKE BASIC
     algorithmicMove(): void {
-        let analysis = this.algorithmicAnalyze();
-        console.log(analysis);
 
         //player puts a creature down for first turn
         if (this.player.turnNumber == 0) {
             this.player.moves = 0;
             this.gameController.addCreatureToField(this.gameController.randomCardId("Creature"));
+            let analysis = this.algorithmicAnalyze();
+            console.log(analysis);
             this.gameController.endofTurn();
         }
         //player is forced to play an action or creature if they have no creature in front of them
@@ -77,6 +77,8 @@ export class AIPlayerController {
                     }
                 }
             }
+            let analysis = this.algorithmicAnalyze();
+            console.log(analysis);
             this.gameController.endofTurn();
         }
         //Execute regular turn
@@ -94,6 +96,8 @@ export class AIPlayerController {
             while (this.player.hand.length > 5) {
                 this.randomDiscard();
             }
+            let analysis = this.algorithmicAnalyze();
+            console.log(analysis);
             this.gameController.endofTurn();
         }
     }
@@ -110,7 +114,7 @@ export class AIPlayerController {
         let hand: number[] = [];
         this.player.hand.forEach((card) => {
             if (card.id < 200) {
-                hand.push(this.creatureCardAnalyze())
+                hand.push(this.creatureCardAnalyze(card))
             }
             else {
                 hand.push(0.4);
@@ -121,8 +125,191 @@ export class AIPlayerController {
     }
 
     /*This function analyzes all hand creature card for algorithm AI Player */
-    creatureCardAnalyze(): number {
-        return 0.5;
+    creatureCardAnalyze(card: Card): number {
+
+        //amount of opponent creatures on the field factor
+        let opponentCreatureAmountFactor = Math.min(this.gameBoard.players[(this.gameBoard.currentPlayer + 1) % 2].field.length * 0.2, 1);
+
+        //Known opponent creature cards vs. creatures already on the field
+        let knownOpponentAndCurrentFieldFactor = 0;
+        if (this.gameBoard.players[(this.gameBoard.currentPlayer + 1) % 2].field.length != 0) {
+            let opponentCanBeDefeated = false;
+            let creatureCantBeDefeated = false;
+            let fieldCreatureInDanger = false;
+            let notSameType = false;
+
+            //populate booleans based on each situation
+            if ((card as Creature).creatureType == "Cat") {
+                opponentCanBeDefeated = this.gameBoard.players[(this.gameBoard.currentPlayer + 1) % 2].field.some((opponentCard) => {
+                    return (opponentCard[0] as Creature).creatureType == "Chicken" && (opponentCard[0] as Creature).facedUp;
+                })
+                creatureCantBeDefeated = this.gameBoard.players[(this.gameBoard.currentPlayer + 1) % 2].field.filter((opponentCard) => {return (opponentCard[0] as Creature).facedUp}).every((opponentCard) => {
+                    return ((opponentCard[0] as Creature).creatureType == "Cat" || (opponentCard[0] as Creature).creatureType == "Chicken");
+                })
+                fieldCreatureInDanger = opponentCanBeDefeated && this.player.field.some((fieldCard) => {
+                    return (fieldCard[0] as Creature).creatureType == "Dog";
+                })
+                notSameType = !this.player.field.some((fieldCard) => {
+                    return (fieldCard[0] as Creature).creatureType == "Cat";
+                })
+            }
+            else if ((card as Creature).creatureType == "Dog") {
+                opponentCanBeDefeated = this.gameBoard.players[(this.gameBoard.currentPlayer + 1) % 2].field.some((opponentCard) => {
+                    return (opponentCard[0] as Creature).creatureType == "Cat" && (opponentCard[0] as Creature).facedUp;
+                })
+                creatureCantBeDefeated = this.gameBoard.players[(this.gameBoard.currentPlayer + 1) % 2].field.filter((opponentCard) => {return (opponentCard[0] as Creature).facedUp}).every((opponentCard) => {
+                    return ((opponentCard[0] as Creature).creatureType == "Dog" || (opponentCard[0] as Creature).creatureType == "Cat");
+                })
+                fieldCreatureInDanger = opponentCanBeDefeated && this.player.field.some((fieldCard) => {
+                    return (fieldCard[0] as Creature).creatureType == "Chicken";
+                })
+                notSameType = !this.player.field.some((fieldCard) => {
+                    return (fieldCard[0] as Creature).creatureType == "Dog";
+                })
+            }
+            else {
+                opponentCanBeDefeated = this.gameBoard.players[(this.gameBoard.currentPlayer + 1) % 2].field.some((opponentCard) => {
+                    return (opponentCard[0] as Creature).creatureType == "Dog" && (opponentCard[0] as Creature).facedUp;
+                })
+                creatureCantBeDefeated = this.gameBoard.players[(this.gameBoard.currentPlayer + 1) % 2].field.filter((opponentCard) => {return (opponentCard[0] as Creature).facedUp}).every((opponentCard) => {
+                    return (opponentCard[0] as Creature).creatureType == "Chicken" || (opponentCard[0] as Creature).creatureType == "Dog";
+                })
+                fieldCreatureInDanger = opponentCanBeDefeated && this.player.field.some((fieldCard) => {
+                    return (fieldCard[0] as Creature).creatureType == "Cat";
+                })
+                notSameType = !this.player.field.some((fieldCard) => {
+                    return (fieldCard[0] as Creature).creatureType == "Chicken";
+                })
+            }
+
+            //Based on booleans determine factor value
+            //console.log("opponentCanBeDefeated: " + opponentCanBeDefeated + " creatureCantBeDefeated: " + creatureCantBeDefeated + " fieldCreatureInDanger: " + fieldCreatureInDanger + " notSameType: " + notSameType)
+            if (opponentCanBeDefeated && creatureCantBeDefeated && fieldCreatureInDanger && notSameType) knownOpponentAndCurrentFieldFactor = 1;
+            else if (opponentCanBeDefeated && creatureCantBeDefeated && notSameType) knownOpponentAndCurrentFieldFactor = 0.8
+            else if (opponentCanBeDefeated && notSameType && fieldCreatureInDanger) knownOpponentAndCurrentFieldFactor = 0.5
+            else if (opponentCanBeDefeated && fieldCreatureInDanger && creatureCantBeDefeated) knownOpponentAndCurrentFieldFactor = 0.3
+            else if (opponentCanBeDefeated && fieldCreatureInDanger) knownOpponentAndCurrentFieldFactor = 0.15
+        }
+
+        //Probability of specific creature types vs. creatures already on the field
+        let futureCreaturePlacementFactor = 0;
+        let knownCatCount = 0;
+        let knownDogCount = 0;
+        let knownChickenCount = 0
+        this.player.hand.forEach((handCard) => {
+            if (handCard.id < 200) {
+                if ((handCard as Creature).creatureType == "Cat") {
+                    knownCatCount = knownCatCount + 1;
+                }
+                else if ((handCard as Creature).creatureType == "Dog") {
+                    knownDogCount = knownDogCount + 1;
+                }
+                else {
+                    knownChickenCount = knownChickenCount + 1;
+                }
+            }
+        })
+        this.gameBoard.discard.forEach((discardCard) => {
+            if (discardCard.id < 200) {
+                if ((discardCard as Creature).creatureType == "Cat") {
+                    knownCatCount = knownCatCount + 1;
+                }
+                else if ((discardCard as Creature).creatureType == "Dog") {
+                    knownDogCount = knownDogCount + 1;
+                }
+                else {
+                    knownChickenCount = knownChickenCount + 1;
+                }
+            }
+        })
+        this.player.field.forEach((fieldCard) => {
+            if ((fieldCard[0] as Creature).creatureType == "Cat") {
+                if ((fieldCard[0] as Creature).matched) knownCatCount = knownCatCount + 2;
+                else knownCatCount = knownCatCount + 1;
+            }
+            else if ((fieldCard[0] as Creature).creatureType == "Dog") {
+                if ((fieldCard[0] as Creature).matched) knownDogCount = knownDogCount + 2;
+                else knownDogCount = knownDogCount + 1;
+            }
+            else {
+                if ((fieldCard[0] as Creature).matched) knownChickenCount = knownChickenCount + 2;
+                else knownChickenCount = knownChickenCount + 1
+            }
+        })
+        this.gameBoard.players[(this.gameBoard.currentPlayer + 1) % 2].field.forEach((fieldCard) => {
+            if ((fieldCard[0] as Creature).facedUp && (fieldCard[0] as Creature).creatureType == "Cat") {
+                if ((fieldCard[0] as Creature).matched) knownCatCount = knownCatCount + 2;
+                else knownCatCount = knownCatCount + 1;
+            }
+            else if ((fieldCard[0] as Creature).facedUp && (fieldCard[0] as Creature).creatureType == "Dog") {
+                if ((fieldCard[0] as Creature).matched) knownDogCount = knownDogCount + 2;
+                else knownDogCount = knownDogCount + 1;
+            }
+            else if ((fieldCard[0] as Creature).facedUp) {
+                if ((fieldCard[0] as Creature).matched) knownChickenCount = knownChickenCount + 2;
+                else knownChickenCount = knownChickenCount + 1
+            }
+        })
+        if (knownCatCount + knownDogCount + knownDogCount < 18) {
+            let fieldCreatureInDanger = false;
+            let notSameType = false;
+            let creaturePlacementProbability = 0;
+
+            //populate booleans based on each situation
+            if ((card as Creature).creatureType == "Cat") {
+                fieldCreatureInDanger = this.player.field.some((fieldCard) => {
+                    return (fieldCard[0] as Creature).creatureType == "Dog";
+                })
+                notSameType = !this.player.field.some((fieldCard) => {
+                    return (fieldCard[0] as Creature).creatureType == "Cat";
+                })
+                creaturePlacementProbability = (6 - knownChickenCount) / (18 - (knownCatCount + knownDogCount + knownChickenCount))
+            }
+            else if ((card as Creature).creatureType == "Dog") {
+                fieldCreatureInDanger = this.player.field.some((fieldCard) => {
+                    return (fieldCard[0] as Creature).creatureType == "Chicken";
+                })
+                notSameType = !this.player.field.some((fieldCard) => {
+                    return (fieldCard[0] as Creature).creatureType == "Dog";
+                })
+                creaturePlacementProbability = (6 - knownCatCount) / (18 - (knownCatCount + knownDogCount + knownChickenCount))
+            }
+            else {
+                fieldCreatureInDanger = this.player.field.some((fieldCard) => {
+                    return (fieldCard[0] as Creature).creatureType == "Cat";
+                })
+                notSameType = !this.player.field.some((fieldCard) => {
+                    return (fieldCard[0] as Creature).creatureType == "Chicken";
+                })
+                creaturePlacementProbability = (6 - knownDogCount) / (18 - (knownCatCount + knownDogCount + knownChickenCount))
+            }
+            //console.log("knownCatCount: " + knownCatCount + " knownDogCount: " + knownDogCount + " knownChickenCount: " + knownChickenCount)
+            //console.log("fieldCreatureInDanger: " + fieldCreatureInDanger + " notSameType: " + notSameType)
+            if (fieldCreatureInDanger && notSameType) futureCreaturePlacementFactor = Math.min(creaturePlacementProbability * 1.5, 1);
+            else if (fieldCreatureInDanger) futureCreaturePlacementFactor = Math.min(creaturePlacementProbability * 1.25, 1);
+            else if (notSameType) futureCreaturePlacementFactor = Math.min(creaturePlacementProbability * 1.15, 1);
+            else futureCreaturePlacementFactor = creaturePlacementProbability;
+        }
+
+        //Ability to match creature
+        let abilityToMatchFactor = 0;
+        if (this.player.hand.some((handCard) => {
+            return card.name == handCard.name && card.id != handCard.id;
+        }) || this.player.field.some((fieldCard) => {
+            return card.name == fieldCard[0].name;
+        })) abilityToMatchFactor = 1;
+        else if (this.gameBoard.players[(this.gameBoard.currentPlayer + 1) % 2].field.every((fieldCard) => {
+            return card.name != fieldCard[0].name;
+        }) && this.gameBoard.discard.every((discardCard) => {
+            return card.name != discardCard.name;
+        })) abilityToMatchFactor = 0.25
+
+        //RETURN FINAL CALCULATION
+        console.log("opponentCreatureAmountFactor: " + opponentCreatureAmountFactor)
+        console.log("knownOpponentAndCurrentFieldFactor: " + knownOpponentAndCurrentFieldFactor)
+        console.log("futureCreaturePlacementFactor: " + futureCreaturePlacementFactor)
+        console.log("abilityToMatchFactor: " + abilityToMatchFactor)
+        return opponentCreatureAmountFactor * 0.1 + knownOpponentAndCurrentFieldFactor * 0.5 + futureCreaturePlacementFactor * 0.2 + abilityToMatchFactor * 0.2;
     }
 
     /* This function is reponsible for all of the basic AI moves*/

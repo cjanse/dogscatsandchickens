@@ -38,7 +38,7 @@ Analyzing Creature Cards in Hand:
 + General Factors to consider:
  - Amount of creatures on opponent field (0.1)
   ~ min(amount of opponent field creatures * 0.2,1)
- - Known opponent creature cards vs. creatures already on the field (0.5) NEEDS REVISION
+ - Known opponent creature cards vs. creatures already on the field (0.5)
   ~ if hand creature can defeat opposing creature & can't be defeated by any opposing creature & field creature can be defeated by opposing creature that hand creature can defeat & there is no field creature of the same type as hand creature: 1
   ~ else if creature can defeat opposing creature & can't be defeated by any opposing creature & there is no field creature of the same type as hand creature: 0.8
   ~ else if creature can defeat opposing creature & there is no field creature of the same type as hand creature & field creature can be defeated by opposing creature that hand creature can defeat: 0.5
