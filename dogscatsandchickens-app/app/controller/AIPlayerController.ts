@@ -41,9 +41,11 @@ export class AIPlayerController {
 
         //player puts a creature down for first turn
         if (this.player.turnNumber == 0) {
-            this.player.moves = 0;
-            this.gameController.addCreatureToField(this.gameController.randomCardId("Creature"));
             let analysis = this.algorithmicAnalyze();
+            console.log(analysis);
+            this.player.moves = 0;
+            this.gameController.addCreatureToField(this.highestCreatureAnalysis(analysis.hand));
+            analysis = this.algorithmicAnalyze();
             console.log(analysis);
             this.gameController.endofTurn();
         }
@@ -310,6 +312,22 @@ export class AIPlayerController {
         console.log("futureCreaturePlacementFactor: " + futureCreaturePlacementFactor)
         console.log("abilityToMatchFactor: " + abilityToMatchFactor)
         return opponentCreatureAmountFactor * 0.1 + knownOpponentAndCurrentFieldFactor * 0.5 + futureCreaturePlacementFactor * 0.2 + abilityToMatchFactor * 0.2;
+    }
+
+    /*This function returns the creature id of the hand creature with the highest analysis value*/
+    highestCreatureAnalysis(handAnalysis: number[]): number {
+        let newHandAnalysis: number[] = [];
+        for (let i = 0; i < handAnalysis.length; i++) {
+            if (this.player.hand[i].id < 200){
+                newHandAnalysis.push(handAnalysis[i]);
+            }
+        }
+        let newHand = this.player.hand.filter((handCard) => {
+            return handCard.id < 200;
+        });
+        let maxNewHandAnalysis = Math.max(...newHandAnalysis)
+        console.log(newHand[newHandAnalysis.findIndex((element) => element == maxNewHandAnalysis)].id);
+        return newHand[newHandAnalysis.findIndex((element) => element == maxNewHandAnalysis)].id;
     }
 
     /* This function is reponsible for all of the basic AI moves*/
