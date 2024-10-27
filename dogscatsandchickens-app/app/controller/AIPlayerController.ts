@@ -145,7 +145,7 @@ export class AIPlayerController {
                 opponentCanBeDefeated = this.gameBoard.players[(this.gameBoard.currentPlayer + 1) % 2].field.some((opponentCard) => {
                     return (opponentCard[0] as Creature).creatureType == "Chicken" && (opponentCard[0] as Creature).facedUp;
                 })
-                creatureCantBeDefeated = this.gameBoard.players[(this.gameBoard.currentPlayer + 1) % 2].field.filter((opponentCard) => {return (opponentCard[0] as Creature).facedUp}).every((opponentCard) => {
+                creatureCantBeDefeated = this.gameBoard.players[(this.gameBoard.currentPlayer + 1) % 2].field.filter((opponentCard) => { return (opponentCard[0] as Creature).facedUp }).every((opponentCard) => {
                     return ((opponentCard[0] as Creature).creatureType == "Cat" || (opponentCard[0] as Creature).creatureType == "Chicken");
                 })
                 fieldCreatureInDanger = opponentCanBeDefeated && this.player.field.some((fieldCard) => {
@@ -159,7 +159,7 @@ export class AIPlayerController {
                 opponentCanBeDefeated = this.gameBoard.players[(this.gameBoard.currentPlayer + 1) % 2].field.some((opponentCard) => {
                     return (opponentCard[0] as Creature).creatureType == "Cat" && (opponentCard[0] as Creature).facedUp;
                 })
-                creatureCantBeDefeated = this.gameBoard.players[(this.gameBoard.currentPlayer + 1) % 2].field.filter((opponentCard) => {return (opponentCard[0] as Creature).facedUp}).every((opponentCard) => {
+                creatureCantBeDefeated = this.gameBoard.players[(this.gameBoard.currentPlayer + 1) % 2].field.filter((opponentCard) => { return (opponentCard[0] as Creature).facedUp }).every((opponentCard) => {
                     return ((opponentCard[0] as Creature).creatureType == "Dog" || (opponentCard[0] as Creature).creatureType == "Cat");
                 })
                 fieldCreatureInDanger = opponentCanBeDefeated && this.player.field.some((fieldCard) => {
@@ -173,7 +173,7 @@ export class AIPlayerController {
                 opponentCanBeDefeated = this.gameBoard.players[(this.gameBoard.currentPlayer + 1) % 2].field.some((opponentCard) => {
                     return (opponentCard[0] as Creature).creatureType == "Dog" && (opponentCard[0] as Creature).facedUp;
                 })
-                creatureCantBeDefeated = this.gameBoard.players[(this.gameBoard.currentPlayer + 1) % 2].field.filter((opponentCard) => {return (opponentCard[0] as Creature).facedUp}).every((opponentCard) => {
+                creatureCantBeDefeated = this.gameBoard.players[(this.gameBoard.currentPlayer + 1) % 2].field.filter((opponentCard) => { return (opponentCard[0] as Creature).facedUp }).every((opponentCard) => {
                     return (opponentCard[0] as Creature).creatureType == "Chicken" || (opponentCard[0] as Creature).creatureType == "Dog";
                 })
                 fieldCreatureInDanger = opponentCanBeDefeated && this.player.field.some((fieldCard) => {
@@ -285,8 +285,8 @@ export class AIPlayerController {
                 })
                 creaturePlacementProbability = (6 - knownDogCount) / (18 - (knownCatCount + knownDogCount + knownChickenCount))
             }
-            //console.log("knownCatCount: " + knownCatCount + " knownDogCount: " + knownDogCount + " knownChickenCount: " + knownChickenCount)
-            //console.log("fieldCreatureInDanger: " + fieldCreatureInDanger + " notSameType: " + notSameType)
+            console.log("knownCatCount: " + knownCatCount + " knownDogCount: " + knownDogCount + " knownChickenCount: " + knownChickenCount)
+            console.log("fieldCreatureInDanger: " + fieldCreatureInDanger + " notSameType: " + notSameType)
             if (fieldCreatureInDanger && notSameType) futureCreaturePlacementFactor = Math.min(creaturePlacementProbability * 1.5, 1);
             else if (fieldCreatureInDanger) futureCreaturePlacementFactor = Math.min(creaturePlacementProbability * 1.25, 1);
             else if (notSameType) futureCreaturePlacementFactor = Math.min(creaturePlacementProbability * 1.15, 1);
@@ -318,7 +318,7 @@ export class AIPlayerController {
     highestCreatureAnalysis(handAnalysis: number[]): number {
         let newHandAnalysis: number[] = [];
         for (let i = 0; i < handAnalysis.length; i++) {
-            if (this.player.hand[i].id < 200){
+            if (this.player.hand[i].id < 200) {
                 newHandAnalysis.push(handAnalysis[i]);
             }
         }
