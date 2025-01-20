@@ -36,7 +36,7 @@ Reinforce turn:
 
 Analyzing Creature Cards in Hand:
 + General Factors to consider:
- - Amount of creatures on opponent field (0.1)
+ - Amount of creatures (0.1)	
   ~ min(amount of opponent field creatures * 0.2,1)
  - Known opponent creature cards vs. creatures already on the field (0.5)
   ~ if hand creature can defeat opposing creature & can't be defeated by any opposing creature & field creature can be defeated by opposing creature that hand creature can defeat & there is no field creature of the same type as hand creature: 1
@@ -47,7 +47,7 @@ Analyzing Creature Cards in Hand:
   ~ All other cases: 0
  - probability of specific creature types vs. creatures already on the field (0.2)
   ~ Count known creature cards of each type in opponent hand, your hand, your field, and discard
-   + if all counts are 0: 0
+   + if all counts are 0: 1
   ~ if exposed type on board & no same creature type: min((1 - count of type that creature) / (1 - count of all types) x 1.5,1) 
   ~ if exposed type on board: min((1 - count of type that creature) / (1 - count of all types) x 1.25,1)
   ~ if no same creature type: min((1 - count of type that creature) / (1 - count of all types) x 1.15,1)
@@ -59,17 +59,4 @@ Analyzing Creature Cards in Hand:
 
 Analyzing Creature card on field:
 + General Factors to consider:
- - Known opponent creature cards vs. creature on field (0.5 or 1)
-  ~ if known creature is of opposite type: 1
-  ~ if the creature type is unknown than this is 0 with a weight of 0.5
-  ~ If the creature is known, then automatically it is 0 with a weight of 1 
- - Is opposite creature double? (0.1)
-  ~ yes 1, no 0
- - Probability of creature being opposite type (0.2)
-  ~ Count known creature cards of each type in opponent hand, your hand, your field, and discard
-   + if all counts are 0: 0
-  ~ (6 - count of type that creature) / (18 - count of all types)
-  ~ if 0, then return 0 with weight 1 
- - Probability of losing creature due to upgrade (0.2)
-  ~ if any faced up upgrades are chaos or counter attack with double dog (or if double dog attacking chicken): 1
-  ~ else: probability of these upgrades appearing (Will ignore creature type relations) 
+ - 

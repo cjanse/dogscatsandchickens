@@ -39,9 +39,11 @@ export class AIPlayerController {
     //CURRENT BEHAVES EXACTLY LIKE BASIC
     algorithmicMove(): void {
 
+        //Analyzes cards
+        let analysis = this.algorithmicAnalyze();
+
         //player puts a creature down for first turn
         if (this.player.turnNumber == 0) {
-            let analysis = this.algorithmicAnalyze();
             console.log(analysis);
             this.player.moves = 0;
             this.gameController.addCreatureToField(this.highestCreatureAnalysis(analysis.hand));
@@ -105,11 +107,11 @@ export class AIPlayerController {
     }
 
     /* This function analyzes all cards for algorithm AI Players */
-    algorithmicAnalyze(): { field: number[], hand: number[] } {
+    algorithmicAnalyze(): { field: number[][], hand: number[] } {
         //Go through field
-        let field: number[] = [];
+        let field: number[][] = [];
         this.player.field.forEach((card) => {
-            field.push(0.4)
+            field.push(this.fieldCardAnalyze(card[0]))
         })
 
         //Go through hand
@@ -134,7 +136,7 @@ export class AIPlayerController {
 
         //Known opponent creature cards vs. creatures already on the field
         let knownOpponentAndCurrentFieldFactor = 0;
-        if (this.gameBoard.players[(this.gameBoard.currentPlayer + 1) % 2].field.length != 0) {
+        if (this.gameBoard.players[(this.gameBoard.currentPlayer + 1) % 2].field.length != 0 && this.gameBoard.players[(this.gameBoard.currentPlayer + 1) % 2].field.some((opponentCard) => { return (opponentCard[0] as Creature).facedUp; })) {
             let opponentCanBeDefeated = false;
             let creatureCantBeDefeated = false;
             let fieldCreatureInDanger = false;
@@ -185,7 +187,7 @@ export class AIPlayerController {
             }
 
             //Based on booleans determine factor value
-            //console.log("opponentCanBeDefeated: " + opponentCanBeDefeated + " creatureCantBeDefeated: " + creatureCantBeDefeated + " fieldCreatureInDanger: " + fieldCreatureInDanger + " notSameType: " + notSameType)
+            console.log("opponentCanBeDefeated: " + opponentCanBeDefeated + " creatureCantBeDefeated: " + creatureCantBeDefeated + " fieldCreatureInDanger: " + fieldCreatureInDanger + " notSameType: " + notSameType)
             if (opponentCanBeDefeated && creatureCantBeDefeated && fieldCreatureInDanger && notSameType) knownOpponentAndCurrentFieldFactor = 1;
             else if (opponentCanBeDefeated && creatureCantBeDefeated && notSameType) knownOpponentAndCurrentFieldFactor = 0.8
             else if (opponentCanBeDefeated && notSameType && fieldCreatureInDanger) knownOpponentAndCurrentFieldFactor = 0.5
@@ -194,65 +196,12 @@ export class AIPlayerController {
         }
 
         //Probability of specific creature types vs. creatures already on the field
-        let futureCreaturePlacementFactor = 0;
-        let knownCatCount = 0;
-        let knownDogCount = 0;
-        let knownChickenCount = 0
-        this.player.hand.forEach((handCard) => {
-            if (handCard.id < 200) {
-                if ((handCard as Creature).creatureType == "Cat") {
-                    knownCatCount = knownCatCount + 1;
-                }
-                else if ((handCard as Creature).creatureType == "Dog") {
-                    knownDogCount = knownDogCount + 1;
-                }
-                else {
-                    knownChickenCount = knownChickenCount + 1;
-                }
-            }
-        })
-        this.gameBoard.discard.forEach((discardCard) => {
-            if (discardCard.id < 200) {
-                if ((discardCard as Creature).creatureType == "Cat") {
-                    knownCatCount = knownCatCount + 1;
-                }
-                else if ((discardCard as Creature).creatureType == "Dog") {
-                    knownDogCount = knownDogCount + 1;
-                }
-                else {
-                    knownChickenCount = knownChickenCount + 1;
-                }
-            }
-        })
-        this.player.field.forEach((fieldCard) => {
-            if ((fieldCard[0] as Creature).creatureType == "Cat") {
-                if ((fieldCard[0] as Creature).matched) knownCatCount = knownCatCount + 2;
-                else knownCatCount = knownCatCount + 1;
-            }
-            else if ((fieldCard[0] as Creature).creatureType == "Dog") {
-                if ((fieldCard[0] as Creature).matched) knownDogCount = knownDogCount + 2;
-                else knownDogCount = knownDogCount + 1;
-            }
-            else {
-                if ((fieldCard[0] as Creature).matched) knownChickenCount = knownChickenCount + 2;
-                else knownChickenCount = knownChickenCount + 1
-            }
-        })
-        this.gameBoard.players[(this.gameBoard.currentPlayer + 1) % 2].field.forEach((fieldCard) => {
-            if ((fieldCard[0] as Creature).facedUp && (fieldCard[0] as Creature).creatureType == "Cat") {
-                if ((fieldCard[0] as Creature).matched) knownCatCount = knownCatCount + 2;
-                else knownCatCount = knownCatCount + 1;
-            }
-            else if ((fieldCard[0] as Creature).facedUp && (fieldCard[0] as Creature).creatureType == "Dog") {
-                if ((fieldCard[0] as Creature).matched) knownDogCount = knownDogCount + 2;
-                else knownDogCount = knownDogCount + 1;
-            }
-            else if ((fieldCard[0] as Creature).facedUp) {
-                if ((fieldCard[0] as Creature).matched) knownChickenCount = knownChickenCount + 2;
-                else knownChickenCount = knownChickenCount + 1
-            }
-        })
-        if (knownCatCount + knownDogCount + knownDogCount < 18) {
+        let futureCreaturePlacementFactor = 1;
+        let typeCounts = this.creatureTypesFound();
+        let knownCatCount = typeCounts[0];
+        let knownDogCount = typeCounts[1];
+        let knownChickenCount = typeCounts[2];
+        if (knownCatCount + knownDogCount + knownChickenCount < 18) {
             let fieldCreatureInDanger = false;
             let notSameType = false;
             let creaturePlacementProbability = 0;
@@ -300,8 +249,8 @@ export class AIPlayerController {
         }) || this.player.field.some((fieldCard) => {
             return card.name == fieldCard[0].name;
         })) abilityToMatchFactor = 1;
-        else if (this.gameBoard.players[(this.gameBoard.currentPlayer + 1) % 2].field.every((fieldCard) => {
-            return card.name != fieldCard[0].name;
+        else if (!this.gameBoard.players[(this.gameBoard.currentPlayer + 1) % 2].field.some((fieldCard) => {
+            return card.name == fieldCard[0].name && (fieldCard[0] as Creature).facedUp;
         }) && this.gameBoard.discard.every((discardCard) => {
             return card.name != discardCard.name;
         })) abilityToMatchFactor = 0.25
@@ -312,6 +261,209 @@ export class AIPlayerController {
         console.log("futureCreaturePlacementFactor: " + futureCreaturePlacementFactor)
         console.log("abilityToMatchFactor: " + abilityToMatchFactor)
         return opponentCreatureAmountFactor * 0.1 + knownOpponentAndCurrentFieldFactor * 0.5 + futureCreaturePlacementFactor * 0.2 + abilityToMatchFactor * 0.2;
+    }
+
+    /*This helper function determines how many known creature types are in the game*/
+    creatureTypesFound(): number[] {
+        let knownCatCount = 0;
+        let knownDogCount = 0;
+        let knownChickenCount = 0
+        this.player.hand.forEach((handCard) => {
+            if (handCard.id < 200) {
+                if ((handCard as Creature).creatureType == "Cat") {
+                    knownCatCount = knownCatCount + 1;
+                }
+                else if ((handCard as Creature).creatureType == "Dog") {
+                    knownDogCount = knownDogCount + 1;
+                }
+                else if ((handCard as Creature).creatureType == "Chicken") {
+                    knownChickenCount = knownChickenCount + 1;
+                }
+            }
+        })
+        this.gameBoard.discard.forEach((discardCard) => {
+            if (discardCard.id < 200) {
+                if ((discardCard as Creature).creatureType == "Cat") {
+                    knownCatCount = knownCatCount + 1;
+                }
+                else if ((discardCard as Creature).creatureType == "Dog") {
+                    knownDogCount = knownDogCount + 1;
+                }
+                else if ((discardCard as Creature).creatureType == "Chicken") {
+                    knownChickenCount = knownChickenCount + 1;
+                }
+            }
+        })
+        this.player.field.forEach((fieldCard) => {
+            if ((fieldCard[0] as Creature).creatureType == "Cat") {
+                if ((fieldCard[0] as Creature).matched) knownCatCount = knownCatCount + 2;
+                else knownCatCount = knownCatCount + 1;
+            }
+            else if ((fieldCard[0] as Creature).creatureType == "Dog") {
+                if ((fieldCard[0] as Creature).matched) knownDogCount = knownDogCount + 2;
+                else knownDogCount = knownDogCount + 1;
+            }
+            else if ((fieldCard[0] as Creature).creatureType == "Chicken") {
+                if ((fieldCard[0] as Creature).matched) knownChickenCount = knownChickenCount + 2;
+                else knownChickenCount = knownChickenCount + 1
+            }
+        })
+        this.gameBoard.players[(this.gameBoard.currentPlayer + 1) % 2].field.forEach((fieldCard) => {
+            if ((fieldCard[0] as Creature).facedUp && (fieldCard[0] as Creature).creatureType == "Cat") {
+                if ((fieldCard[0] as Creature).matched) knownCatCount = knownCatCount + 2;
+                else knownCatCount = knownCatCount + 1;
+            }
+            else if ((fieldCard[0] as Creature).facedUp && (fieldCard[0] as Creature).creatureType == "Dog") {
+                if ((fieldCard[0] as Creature).matched) knownDogCount = knownDogCount + 2;
+                else knownDogCount = knownDogCount + 1;
+            }
+            else if ((fieldCard[0] as Creature).facedUp && (fieldCard[0] as Creature).creatureType == "Chicken") {
+                if ((fieldCard[0] as Creature).matched) knownChickenCount = knownChickenCount + 2;
+                else knownChickenCount = knownChickenCount + 1
+            }
+        })
+        return [knownCatCount, knownDogCount, knownChickenCount]
+    }
+
+    /*This function analyzes all field creatures and determines which creature it should and if it should attack*/
+    fieldCardAnalyze(card: Card): number[] {
+        let typeCounts = this.creatureTypesFound()
+        let typeTotal = typeCounts[0] + typeCounts[1] + typeCounts[2];
+        let upgradeCounts = this.upgradeTypesFound()
+        let upgradeTypeTotal = upgradeCounts[0] + upgradeCounts[1] + upgradeCounts[2] + upgradeCounts[3] + upgradeCounts[4];
+        console.log(upgradeCounts)
+        let defeatType = "Dog";
+        let creatureFightValue: number[] = []
+        if ((card as Creature).creatureType == "Cat") defeatType = "Chicken";
+        else if ((card as Creature).creatureType == "Dog") defeatType = "Cat";
+        //Analyze each opponent creature vs. current card
+        this.gameBoard.players[(this.gameBoard.currentPlayer + 1) % 2].field.forEach(opponentCards => {
+            let defeatCreature = 0
+            let nonLethalUpgrade = 1
+            //Check to see if it can be defeated
+            if ((card as Creature).creatureType == "Dog" && (card as Creature).matched) defeatCreature = 1;
+            if ((opponentCards[0] as Creature).facedUp && (opponentCards[0] as Creature).creatureType == defeatType) {
+                defeatCreature = 1
+            }
+            else if (!(opponentCards[0] as Creature).facedUp) {
+                if (defeatType == "Chicken") {
+                    defeatCreature = (6 - typeCounts[2]) / (18 - typeTotal)
+                }
+                else if (defeatType == "Cat") {
+                    defeatCreature = (6 - typeCounts[0]) / (18 - typeTotal)
+                }
+                else {
+                    defeatCreature = (6 - typeCounts[1]) / (18 - typeTotal)
+                }
+            }
+            //Check for possibility of lethal upgrade
+            let upgradeNum = opponentCards.filter(opponentCard => { return opponentCard.id > 200 && opponentCard.id < 300 }).length
+            if (upgradeNum > 0) {
+                if (opponentCards.some((opponentCard) => { return opponentCard.id == 209 && (opponentCard as Upgrade).facedUp })) {
+                    nonLethalUpgrade = 0;
+                }
+                else if (upgradeCounts[4] == 0) {
+                    if (upgradeNum == 1) {
+                        nonLethalUpgrade = (8 - upgradeTypeTotal) / (9 - upgradeTypeTotal)
+                    }
+                    else {
+                        nonLethalUpgrade = ((8 - upgradeTypeTotal) / (9 - upgradeTypeTotal)) * ((8 - upgradeTypeTotal - 1) / (9 - upgradeTypeTotal))
+                    }
+                }
+            }
+            let tempFightValue = defeatCreature * 0.75 + nonLethalUpgrade * 0.25
+            if (creatureFightValue.length == 0 || creatureFightValue[0] < tempFightValue) {
+                creatureFightValue = [tempFightValue, opponentCards[0].id]
+            }
+        });
+
+        return creatureFightValue;
+    }
+
+    /*This helper function determines how many known upgrades types are in the game*/
+    upgradeTypesFound(): number[] {
+        let knownCounterAttack = 0;
+        let knownDefense = 0;
+        let knownFakeUpgrade = 0;
+        let knownRevive = 0;
+        let knownSelfDestruct = 0;
+        this.player.hand.forEach((handCard) => {
+            if (handCard.id > 200 && handCard.id < 300) {
+                if ((handCard as Upgrade).upgradeType == "Counter Attack") {
+                    knownCounterAttack = knownCounterAttack + 1;
+                }
+                else if ((handCard as Upgrade).upgradeType == "Defense") {
+                    knownDefense = knownDefense + 1;
+                }
+                else if ((handCard as Upgrade).upgradeType == "Fake Upgrade") {
+                    knownFakeUpgrade = knownFakeUpgrade + 1;
+                }
+                else if ((handCard as Upgrade).upgradeType == "Revive") {
+                    knownRevive = knownRevive + 1;
+                }
+                else if ((handCard as Upgrade).upgradeType == "Self-Destruct") {
+                    knownSelfDestruct = knownSelfDestruct + 1;
+                }
+            }
+        })
+        this.gameBoard.discard.forEach((discardCard) => {
+            if (discardCard.id > 200 && discardCard.id < 300) {
+                if ((discardCard as Upgrade).upgradeType == "Counter Attack") {
+                    knownCounterAttack = knownCounterAttack + 1;
+                }
+                else if ((discardCard as Upgrade).upgradeType == "Defense") {
+                    knownDefense = knownDefense + 1;
+                }
+                else if ((discardCard as Upgrade).upgradeType == "Fake Upgrade") {
+                    knownFakeUpgrade = knownFakeUpgrade + 1;
+                }
+                else if ((discardCard as Upgrade).upgradeType == "Revive") {
+                    knownRevive = knownRevive + 1;
+                }
+                else if ((discardCard as Upgrade).upgradeType == "Self-Destruct") {
+                    knownSelfDestruct = knownSelfDestruct + 1;
+                }
+            }
+        })
+        this.player.field.forEach((fieldCards) => {
+            fieldCards.forEach((fieldCard => {
+                if ((fieldCard as Upgrade).upgradeType == "Counter Attack") {
+                    knownCounterAttack = knownCounterAttack + 1;
+                }
+                else if ((fieldCard as Upgrade).upgradeType == "Defense") {
+                    knownDefense = knownDefense + 1;
+                }
+                else if ((fieldCard as Upgrade).upgradeType == "Fake Upgrade") {
+                    knownFakeUpgrade = knownFakeUpgrade + 1;
+                }
+                else if ((fieldCard as Upgrade).upgradeType == "Revive") {
+                    knownRevive = knownRevive + 1;
+                }
+                else if ((fieldCard as Upgrade).upgradeType == "Self-Destruct") {
+                    knownSelfDestruct = knownSelfDestruct + 1;
+                }
+            }))
+        })
+        this.gameBoard.players[(this.gameBoard.currentPlayer + 1) % 2].field.forEach((fieldCards) => {
+            fieldCards.forEach((fieldCard => {
+                if ((fieldCard as Upgrade).facedUp && (fieldCard as Upgrade).upgradeType == "Counter Attack") {
+                    knownCounterAttack = knownCounterAttack + 1;
+                }
+                else if ((fieldCard as Upgrade).facedUp && (fieldCard as Upgrade).upgradeType == "Defense") {
+                    knownDefense = knownDefense + 1;
+                }
+                else if ((fieldCard as Upgrade).facedUp && (fieldCard as Upgrade).upgradeType == "Fake Upgrade") {
+                    knownFakeUpgrade = knownFakeUpgrade + 1;
+                }
+                else if ((fieldCard as Upgrade).facedUp && (fieldCard as Upgrade).upgradeType == "Revive") {
+                    knownRevive = knownRevive + 1;
+                }
+                else if ((fieldCard as Upgrade).facedUp && (fieldCard as Upgrade).upgradeType == "Self-Destruct") {
+                    knownSelfDestruct = knownSelfDestruct + 1;
+                }
+            }))
+        })
+        return [knownCounterAttack, knownDefense, knownFakeUpgrade, knownRevive, knownSelfDestruct]
     }
 
     /*This function returns the creature id of the hand creature with the highest analysis value*/
