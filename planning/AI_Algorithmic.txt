@@ -59,4 +59,10 @@ Analyzing Creature Cards in Hand:
 
 Analyzing Creature card on field:
 + General Factors to consider:
- - 
+ - face up
+  ~ face up & can defeat 0.75
+  ~ face up & probability of non-lethal upgrade 0.25
+  ~ NOTE: Automatically 0 if guaranteed to lose/tie
+ - not face up
+  ~ probability of defeating creature 0.75
+  ~ probability of non-lethal upgrade 0.25
